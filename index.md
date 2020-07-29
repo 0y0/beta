@@ -85,6 +85,6 @@ public class Clay implements Deformable
 | Key | Contents |
 | --- | --- |
 {% for k in site -%}{%- if k=="html_pages" or k=="pages" or k=="excerpt_separator" or k=="github" -%}{%- else -%}
-| {{ k }} | {{ site[k] }} |
+| {%- if site[k].first -%}*{{ k }}*{: style="color: orange"}{%- else -%}{{ k }}{%- endif -%} | {%- if site[k].first -%}{{ site[k] | join: "<br>" }}{%- else -%}{{ site[k] }}{%- endif -%} |
 {% endif -%}{%- endfor %}
 
