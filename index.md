@@ -32,6 +32,20 @@ $$
 \end{aligned}
 $$
 
+## Java Code
+
+~~~ java
+import java.io.File;
+
+public class Clay implements Deformable
+{
+  public final static ST = "ST982567";
+  String desc;
+  Color pantone;
+  Date expiry;
+}
+~~~
+
 ## Jekyll Environment Variables
 
 | Key | Contents |
