@@ -2,7 +2,7 @@
 ---
 Placeholder
 
-{%- unless site.url contains 'oyo.tokyo' -%}
+{%- if site.url contains 'oyo.tokyo' -%}{%- else -%}
 <a href="/admin/collections/posts" target="_blank">Edit Posts</a>
 {%- endif -%}
 
