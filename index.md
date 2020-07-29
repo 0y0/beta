@@ -2,6 +2,6 @@
 ---
 Placeholder
 
-Host: {{ site.host }}
-URL: {{ page.url }}
+* Host: {{ site.host }}
+* URL: {{ page.url }}
 
