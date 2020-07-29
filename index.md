@@ -1,7 +1,27 @@
 ---
 ---
 <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-<style>.MathJax_Display { text-align: left !important; }</style>
+<style>
+.MathJax_Display { text-align: left !important; }
+.row {
+  display: flex;
+}
+.c1 {
+  flex: 1 1;
+  display: inline-block;
+  vertical-align: top;
+}
+.c2 {
+  flex: 2 2;
+  display: inline-block;
+  vertical-align: top;
+}
+.c1 img, .c2 img {
+  max-height: 800px;
+  width: auto;
+  vertical-align: top;
+}
+</style>
 
 {% if site.url contains 'oyo.tokyo' -%}{%- else %}
 <a href="/admin/collections/posts" target="_blank">Edit Posts</a>
@@ -12,6 +32,20 @@
 * Host: {{ site.host }}
 * Port: {{ site.port }}
 * URL: {{ site.url }}
+
+## Two-Column Layout
+
+<div class="row">
+  <div class="c1">
+![kitten](/kitten.jpg)
+  </div>
+  <div class="c2">
+1. Don't forget to feed me.
+1. Don't ignore me.
+1. All your keyboards are belong to me.
+1. Don't annoy me with cameras.
+  </div>
+</div>
 
 ## MathJax
 
