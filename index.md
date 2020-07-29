@@ -2,7 +2,7 @@
 ---
 Placeholder
 
-{%- if site.url contains 'oyo.tokyo' -%}{%- else -%}
+{% if site.url contains 'oyo.tokyo' -%}{%- else -%}
 <a href="/admin/collections/posts" target="_blank">Edit Posts</a>
 {%- endif -%}
 
@@ -10,6 +10,8 @@ Placeholder
 * Port: {{ site.port }}
 * URL: {{ site.url }}
 
-> {% for v in site %}
-* {{ v }}
+| Table |
+| --- |
+{% for v in site %}
+| {{ v }} |
 {% endfor %}
