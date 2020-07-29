@@ -1,6 +1,7 @@
 ---
 ---
 <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+<style>.MathJax_Display { text-align: left !important; }</style>
 
 {% if site.url contains 'oyo.tokyo' -%}{%- else %}
 <a href="/admin/collections/posts" target="_blank">Edit Posts</a>
@@ -16,9 +17,9 @@
 
 $$
 \begin{aligned}
-  & \phi(x,y) = \phi \left(\sum_{i=1}^n x_ie_i, \sum_{j=1}^n y_je_j \right)
-  = \sum_{i=1}^n \sum_{j=1}^n x_i y_j \phi(e_i, e_j) = \\
-  & (x_1, \ldots, x_n) \left( \begin{array}{ccc}
+  \phi(x,y) & = \phi \left(\sum_{i=1}^n x_ie_i, \sum_{j=1}^n y_je_j \right) \\
+  & = \sum_{i=1}^n \sum_{j=1}^n x_i y_j \phi(e_i, e_j) \\
+  & = (x_1, \ldots, x_n) \left( \begin{array}{ccc}
       \phi(e_1, e_1) & \cdots & \phi(e_1, e_n) \\
       \vdots & \ddots & \vdots \\
       \phi(e_n, e_1) & \cdots & \phi(e_n, e_n)
