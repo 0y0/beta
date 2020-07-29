@@ -15,3 +15,4 @@ Placeholder
 {% for k in site -%}{%- if k=="html_pages" or k=="pages" or k=="excerpt_separator" or k=="github" -%}{%- else -%}
 | {{ k }} | {{ site[k] }} |
 {% endif -%}{%- endfor %}
+
