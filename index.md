@@ -2,12 +2,14 @@
 ---
 Placeholder
 
-{%- if site.port=="4000" -%}
-<p><a href="/admin/collections/posts" target="_blank">Edit Posts</a></p>
+{%- unless site.url contains 'oyo.tokyo' -%}
+<a href="/admin/collections/posts" target="_blank">Edit Posts</a>
 {%- endif -%}
 
 * Host: {{ site.host }}
 * Port: {{ site.port }}
 * URL: {{ site.url }}
 
-> {{ site }}
+> {% for v in site %}
+* {{ v }}
+{% endfor %}
