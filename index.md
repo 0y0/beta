@@ -31,7 +31,7 @@
 </style>
 
 {% if site.url contains 'oyo.tokyo' -%}{%- else %}
-<a class="staff" href="/admin/collections/posts" target="_blank">Edit Posts</a>
+<a class="staff" href="/admin/collections/posts" target="admin">Edit Posts</a>
 {% endif %}
 
 ## Site Info

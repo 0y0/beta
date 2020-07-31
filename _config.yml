@@ -1,4 +1,4 @@
-#theme: jekyll-theme-minimal
+theme: jekyll-theme-primer
 
 kramdown:
   parse_block_html: true
