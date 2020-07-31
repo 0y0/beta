@@ -21,10 +21,17 @@
   width: auto;
   vertical-align: top;
 }
+.staff {
+  display: inline-block;
+  text-align: center;
+  background: cyan;
+  padding: 3px 10px;
+  float: right;
+}
 </style>
 
 {% if site.url contains 'oyo.tokyo' -%}{%- else %}
-<a href="/admin/collections/posts" target="_blank">Edit Posts</a>
+<a class="staff" href="/admin/collections/posts" target="_blank">Edit Posts</a>
 {% endif %}
 
 ## Site Info
@@ -80,11 +87,23 @@ public class Clay implements Deformable
 }
 ~~~
 
-## Jekyll Environment Variables
+## Jekyll Site Variables
 
 | Key | Contents |
 | --- | --- |
 {% for k in site -%}{%- if k=="html_pages" or k=="pages" or k=="excerpt_separator" or k=="github" -%}{%- else -%}
-| {%- if site[k].first -%}*{{ k }}*{: style="color: orange"}{%- else -%}{{ k }}{%- endif -%} | {%- if site[k].first -%}{{ site[k] | join: "<br>" }}{%- else -%}{{ site[k] }}{%- endif -%} |
+{%- assign v = site[k] -%}
+| {%- if v.first -%}*{{ k }}*{: style="color: orange"}{%- else -%}{{ k }}{%- endif -%} 
+| {%- if v.first -%}{%- if v.first.first -%}{%- for c in v -%}{{ c | join: " = " }}<br/>{%- endfor -%}{%- else -%}{{ v | join: "<br/>" }}{%- endif -%}{%- else -%}{{ v }}{%- endif -%} |
+{% endif -%}{%- endfor %}
+
+## GitHub Variables (site.github)
+
+| Key | Contents |
+| --- | --- |
+{% for k in site.github -%}{%- if k=="html_pages" or k=="pages" or k=="excerpt_separator" or k=="github" -%}{%- else -%}
+{%- assign v = site.github[k] -%}
+| {%- if v.first -%}*{{ k }}*{: style="color: orange"}{%- else -%}{{ k }}{%- endif -%} 
+| {%- if v.first -%}{%- if v.first.first -%}{%- for c in v -%}{{ c | join: " = " }}<br/>{%- endfor -%}{%- else -%}{{ v | join: "<br/>" }}{%- endif -%}{%- else -%}{{ v }}{%- endif -%} |
 {% endif -%}{%- endfor %}
 
