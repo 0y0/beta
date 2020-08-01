@@ -1,0 +1,7 @@
+<div class="row">
+  <div class="c1">
+{% capture nameStart %}{{ include.src | slice: 0 }}{% endcapture %}
+{% capture imagePath %}/assets/{% if nameStart=="/" %}img{% else %}posts/{{ page.date | date: "%Y-%m-%d" }}/{% endif %}{{ include.src }}{% endcapture %}
+<img src="{{ imagePath }}"{% if include.alt %} alt="{{ include.alt }}"{% endif %}{% if include.width %} width="{{ include.width }}"{% endif %}/>
+  </div>
+<div class="c2">

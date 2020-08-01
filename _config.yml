@@ -1,4 +1,6 @@
 theme: jekyll-theme-primer
 
+title: Beta
+
 kramdown:
   parse_block_html: true

@@ -1,5 +1,7 @@
 ---
+layout: home
 ---
+
 <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 <style>
 .MathJax_Display { text-align: left !important; }
@@ -21,7 +23,7 @@
   width: auto;
   vertical-align: top;
 }
-.staff {
+.local-only {
   display: inline-block;
   text-align: center;
   background: cyan;
@@ -31,7 +33,7 @@
 </style>
 
 {% if site.url contains 'oyo.tokyo' -%}{%- else %}
-<a class="staff" href="/admin/collections/posts" target="admin">Edit Posts</a>
+<a class="local-only" href="/admin/collections/posts" target="admin">Edit Posts</a>
 {% endif %}
 
 ## Site Info
@@ -42,17 +44,12 @@
 
 ## Two-Column Layout
 
-<div class="row">
-  <div class="c1">
-![kitten](/kitten.jpg)
-  </div>
-  <div class="c2">
+{% include figure src="/kitten.jpg" alt="kitten" %}
 1. Don't forget to feed me.
 1. Don't ignore me.
 1. All your keyboards are belong to me.
 1. Don't annoy me with cameras.
-  </div>
-</div>
+{% include endfigure %}
 
 ## MathJax
 
@@ -106,4 +103,3 @@ public class Clay implements Deformable
 | {%- if v.first -%}*{{ k }}*{: style="color: orange"}{%- else -%}{{ k }}{%- endif -%} 
 | {%- if v.first -%}{%- if v.first.first -%}{%- for c in v -%}{{ c | join: " = " }}<br/>{%- endfor -%}{%- else -%}{{ v | join: "<br/>" }}{%- endif -%}{%- else -%}{{ v }}{%- endif -%} |
 {% endif -%}{%- endfor %}
-
