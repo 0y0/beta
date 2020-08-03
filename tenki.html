@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<meta http-equiv="refresh" content="600">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="pragma" content="no-cache">
+<meta equiv="expires" content="-1">
+<meta name="viewport" content="width=device-width, initial-scale=0.75" />
+<html>
+	<title>Tenki Dashboard</title>
+  <head>
+  <title>Garden Dashboard</title>
+  <script type="text/javascript" src="/assets/js/license.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script type="text/javascript" src="/assets/js/highcharts-5.0.14.js"></script>
+  <script src="https://thingspeak.com/assets/application-49e8d0f03761d13a560e5e3d9c0af669.js"></script>
+
+  <style type="text/css">
+  body { background-color: #e8ffff; width: 100%; margin: 0; padding: 0; font-family: sans-serif; }
+  #title { background-color: #c0ffff; width: 400px; font-weight: bold; text-align: center; margin: 5px 10px 0 5px; }
+  #timestamp { width: 400px; text-align: center; font-size: 8pt; margin: 0; }
+  #chart-container1 { width: 400px; height: 150px; margin: 5px 5px 0 5px; }
+  #chart-container2 { width: 400px; height: 150px; margin: 5px 5px 0 5px; }
+  #chart-container3 { width: 400px; height: 150px; margin: 5px 5px 0 5px; }
+  #chart-container4 { width: 400px; height: 150px; margin: 5px 5px 0 5px; }
+  .highcharts-column-series .highcharts-point { stroke-width: 0; }
+  .big-box { width: 400px; height: 130px; line-height: 130px; text-align: center; }
+  .big-label { font-size: 30px; font-weight: 900; filter: drop-shadow(0 0 4px white); color: black; -webkit-text-stroke: 0.6px white;}
+  div:hover .big-box { display: none; }
+  </style>
+
+  <script type="text/javascript">
+  var series_1_channel_id = 598912;
+  var series_1_field_number = 1;
+  var series_1_read_api_key = 'J9NF5IHZC15YHEKX';
+  var series_1_results = 300;
+  var series_1_color = 'green';
+
+  var series_2_channel_id = series_1_channel_id;
+  var series_2_field_number = 2;
+  var series_2_read_api_key = series_1_read_api_key;
+  var series_2_results = series_1_results;
+  var series_2_color = 'red';
+
+  var series_3_channel_id = series_1_channel_id;
+  var series_3_field_number = 3;
+  var series_3_read_api_key = series_1_read_api_key;
+  var series_3_results = series_1_results;
+  var series_3_color = 'blue';
+
+  var series_4_channel_id = series_1_channel_id;
+  var series_4_field_number = 4;
+  var series_4_read_api_key = series_1_read_api_key;
+  var series_4_results = series_1_results;
+  var series_4_color = 'purple';
+  
+  // user's timezone offset
+  var my_offset = new Date().getTimezoneOffset();
+  
+  Highcharts.setOptions({ lang: { numericSymbols: null } });
+
+  // when the document is ready
+  $(document).on('ready', function() {
+    var c1 = addChart('chart-container1','Battery','');
+    addSeries(c1, series_1_channel_id, series_1_field_number, series_1_read_api_key, series_1_results, series_1_color);
+    var c2 = addChart('chart-container2','Temperature','');
+    addSeries(c2, series_2_channel_id, series_2_field_number, series_2_read_api_key, series_2_results, series_2_color);
+    var c3 = addChart('chart-container3','Humidity','');
+    addSeries(c3, series_3_channel_id, series_3_field_number, series_3_read_api_key, series_3_results, series_3_color);
+    var c4 = addChart('chart-container4','Pressure','');
+    addSeries(c4, series_4_channel_id, series_4_field_number, series_4_read_api_key, series_4_results, series_4_color);
+  });
+
+  // add the base chart
+  function addChart(container, chart_title, y_axis_title) {
+    // variable for the local date in milliseconds
+    var localDate;
+
+    // specify the chart options
+    var chartOptions = {
+      chart: {
+        renderTo: container,
+        defaultSeriesType: 'column',
+        backgroundColor: '#ffffff',
+        marginLeft: 50,
+        events: { }
+      },
+      title: {
+        text: chart_title,
+        style: { 'fontSize': '12pt' }
+      },
+      plotOptions: {
+        series: {
+          marker: { radius: 1 },
+          animation: false,
+          step: false,
+          borderWidth: 0,
+          turboThreshold: 0,
+          pointPadding: 0,
+          groupPadding: 0,
+          shadow: false
+        }
+      },
+      tooltip: {
+        style: { 'fontSize': '8pt' },
+        // reformat the tooltips so that local times are displayed
+        formatter: function() {
+          var d = new Date(this.x + (my_offset*60000));
+          var n = (this.point.name === undefined) ? '' : '<br>' + this.point.name;
+          return this.y + '</b>' + n + '<br>' + d.toDateString() + '<br>' + d.toTimeString().replace(/\(.*\)/, "");
+        }
+      },
+      xAxis: {
+        min: Date.now() - my_offset*60000 - 5*86400*1000, 
+        max: Date.now() - my_offset*60000 + 900000,
+        type: 'datetime',
+      },
+      yAxis: {
+//        min: 0,
+        title: { text: y_axis_title }
+      },
+      exporting: { enabled: false },
+      legend: { enabled: false },
+      credits: {
+        text: '',
+        href: 'https://thingspeak.com/',
+        style: { color: '#D62020' }
+      }
+    };
+    
+    if (container == 'chart-container1') {
+      chartOptions.yAxis.tickInterval = 0.5;
+      chartOptions.yAxis.min = 2.5;
+    }
+    else if (container == 'chart-container2') {
+      chartOptions.yAxis.tickInterval = 10;
+      chartOptions.yAxis.max = 40;
+      chartOptions.yAxis.min = 0;
+    }
+    else if (container == 'chart-container3') {
+      chartOptions.yAxis.tickInterval = 20;
+      chartOptions.yAxis.min = 0;
+    }
+    else if (container == 'chart-container4') {
+      chartOptions.yAxis.tickInterval = 10;
+      chartOptions.yAxis.max = 1030;
+      chartOptions.yAxis.min = 960;
+    }
+
+    // draw the chart
+    return new Highcharts.Chart(chartOptions);
+  }
+
+  // add a series to the chart
+  function addSeries(chart, channel_id, field_number, api_key, results, color) {
+    var field_name = 'field' + field_number;
+
+    // get the data with a webservice call
+    $.getJSON('https://api.thingspeak.com/channels/' + channel_id + '/fields/' + field_number + '.json?offset=0&round=2&days=5&api_key=' + api_key, function(data) {
+
+      // blank array for holding chart data
+      var chart_data = [];
+
+      // iterate through each feed
+      $.each(data.feeds, function() {
+        var point = new Highcharts.Point();
+        // set the proper values
+        var value = this[field_name];
+        if (value == null) return;
+        point.x = getChartDate(this.created_at);
+        point.y = parseFloat(value);
+//        if (field_number == 2) point.y /= 1000;
+//        if (field_number == 3 || field_number == 5 || field_number == 7) point.y /= 100;
+        // add location if possible
+        if (this.location) { point.name = this.location; }
+        // if a numerical value exists add it
+        if (isNaN(parseInt(value))) return;
+//        if ((field_number == 2 || field_number == 5) && value > 100) return;
+//        if ((field_number == 3 || field_number == 6) && value > 80) return;
+        if (value >=-1000 && value < 4000) { chart_data.push(point); }
+      });
+
+      var last = chart_data[chart_data.length-1];
+      $("#timestamp").text(new Date(last.x + my_offset * 60000));
+      chart.xAxis[0].addPlotLine({
+        color: 'cyan',
+        width: 1,
+        value: last.x,
+        zIndex: 0
+      });
+
+      chart.renderer.label('<div class="big-box"><span class="big-label">' + last.y.toFixed(2) + '</span></div>', 0, 0, null, null,null, true).add();
+
+      // add the chart data
+      chart.addSeries({ data: chart_data, name: data.channel[field_name], color: color });
+    });
+  }
+
+  // converts date format from JSON
+  function getChartDate(d) {
+    // offset in minutes is converted to milliseconds and subtracted so that chart's x-axis is correct
+    return Date.parse(d) - (my_offset * 60000);
+  }
+  </script>
+
+</head>
+
+<body>
+  <div id="title" onclick="window.top.location=window.location">Tenki</div>
+  <div id="timestamp"></div>
+  <div id="chart-container1"></div>
+  <div id="chart-container4"></div>
+  <div id="chart-container2"></div>
+  <div id="chart-container3"></div>
+</body>
+
+</html>
+
