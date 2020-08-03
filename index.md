@@ -3,37 +3,9 @@ layout: home
 ---
 
 <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-<style>
-.MathJax_Display { text-align: left !important; }
-.row {
-  display: flex;
-}
-.c1 {
-  flex: 1 1;
-  display: inline-block;
-  vertical-align: top;
-}
-.c2 {
-  flex: 2 2;
-  display: inline-block;
-  vertical-align: top;
-}
-.c1 img, .c2 img {
-  max-height: 800px;
-  width: auto;
-  vertical-align: top;
-}
-.local-only {
-  display: inline-block;
-  text-align: center;
-  background: cyan;
-  padding: 3px 10px;
-  float: right;
-}
-</style>
 
 {% if site.url contains 'oyo.tokyo' -%}{%- else %}
-<a class="local-only" href="/admin/collections/posts" target="admin">Edit Posts</a>
+<a class="local-link" href="/admin/collections/posts" target="admin">Edit Posts</a>
 {% endif %}
 
 ## Site Info

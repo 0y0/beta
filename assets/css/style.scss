@@ -1,0 +1,30 @@
+---
+---
+@import "{{ site.theme }}";
+
+.MathJax_Display { text-align: left !important; }
+.row {
+  display: flex;
+}
+.c1 {
+  flex: 1 1;
+  display: inline-block;
+  vertical-align: top;
+}
+.c2 {
+  flex: 2 2;
+  display: inline-block;
+  vertical-align: top;
+}
+.c1 img, .c2 img {
+  max-height: 800px;
+  width: auto;
+  vertical-align: top;
+}
+.local-link {
+  display: inline-block;
+  text-align: center;
+  background: cyan;
+  padding: 3px 10px;
+  float: right;
+}
