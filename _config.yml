@@ -1,5 +1,7 @@
 theme: jekyll-theme-primer
 
+github: [metadata]
+
 title: Beta
 
 kramdown:
