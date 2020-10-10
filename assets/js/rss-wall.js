@@ -30,31 +30,34 @@ function unescapeHTML(str) {
 };
 
 function async_fetch(link) {
-  fetch(proxyurl + link)
+  return fetch(proxyurl + link)
     .then(response => response.text())
     .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
     .then(data => {
       const items = data.querySelectorAll("item");
       let html = ``;
       items.forEach(el => {
-        html += `
-          <article>
-            <a href="${el.querySelector("link").innerHTML}" target="_blank" rel="noopener">
-        `;
         var image = el.querySelector("image");
-        var title = el.querySelector("title");
-        if (image) html += `<img src="${image.innerHTML}" alt="">`;
-        html += `<h2>${unescapeHTML(title.innerHTML)}</h2>
-            </a>
-          </article>
-        `;
+        if (image) {
+          var title = el.querySelector("title");
+          html += `
+            <article>
+              <a href="${el.querySelector("link").innerHTML}" target="_blank" rel="noopener">
+                <img src="${image.innerHTML}" alt="">
+                <h2>${unescapeHTML(title.innerHTML)}</h2>
+              </a>
+            </article>
+          `;
+        }
       });
       document.body.insertAdjacentHTML('beforeend', html);
     });
 }
 
 async function fetch_rss(links) {
-  for (var i = 0; i < links.length; i++) {
-    await async_fetch(links[i]);
+  //for (var i = 0; i < links.length; i++) {
+  //  await async_fetch(links[i]);
+  for (var url of links) {
+    await async_fetch(url);
   }
 }
