@@ -3,7 +3,11 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   grid-gap: 2rem;
-  background: #404040;
+  background: url(/assets/img/starfield.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 article {
   background: #ECEFF1;
