@@ -30,7 +30,7 @@ function unescapeHTML(str) {
 };
 
 function async_fetch(link) {
-  fetch(proxyurl + url)
+  fetch(proxyurl + link)
     .then(response => response.text())
     .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
     .then(data => {
@@ -54,7 +54,7 @@ function async_fetch(link) {
 }
 
 async function fetch_rss(links) {
-  for (url of links) {
-    await async_fetch(url);
+  for (var i = 0; i < links.length; i++) {
+    await async_fetch(links[i]);
   }
 }
