@@ -18,9 +18,9 @@ article img {
 article a {
   text-decoration: none;
   color: #63899A;
-  &:hover, &:focus {
-    color: #455A64;
-  }
+}
+article a :hover, :focus {
+  color: #455A64;
 }
 article a h2 {
   padding: 1rem 1rem;
