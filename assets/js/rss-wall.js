@@ -1,8 +1,8 @@
 const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
 function fetch_rss(links) {
-  for (var url of links) {
-    fetch(proxyurl + url)
+  for (var i = 0; i < links.length; i++) {
+    fetch(proxyurl + links[i])
       .then(response => response.text())
       .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
       .then(data => {
