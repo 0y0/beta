@@ -1,0 +1,28 @@
+body {
+  margin: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-gap: 2rem;
+  background: #404040;
+}
+article {
+  background: #ECEFF1;
+  border-radius: 4px;
+  overflow: hidden;
+  font: 12px/1.1 system-ui, sans-serif;
+}
+article img {
+  max-width: 100%;
+  box-shadow: 0 0 3px #B0BEC5;
+}
+article a {
+  text-decoration: none;
+  color: #63899A;
+  &:hover, &:focus {
+    color: #455A64;
+  }
+}
+article a h2 {
+  padding: 1rem 1rem;
+  margin: 0;
+}
