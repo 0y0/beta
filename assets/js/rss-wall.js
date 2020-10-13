@@ -15,6 +15,12 @@ const htmlEntities = {
   apos: '\''
 };
 
+function offsetDate(hours) {
+  var now = new Date();
+  now.setHours(now.getHours() + hours);
+  return now;
+}
+
 function formatTitle(str) {
   str = str.replace(/\&([^;]+);/g, function (entity, entityCode) {
     var match;
@@ -30,11 +36,12 @@ function formatTitle(str) {
   return str.substring(0, str.lastIndexOf('('));
 };
 
-function renderArticle(item) {
+function renderArticle(item, recent) {
   //console.log(item);
   var ts = new Date(item.pubDate);
+  var cl = ts > recent ? ' class="recent"' : '';
   var html = `
-    <article>
+    <article${cl}>
       <a href="${item.link}" target="_blank" rel="noopener">
         <img src="${item.image}" alt="">
         <h2>${item.title}</h2>
@@ -50,7 +57,7 @@ function asyncFetch(items, link) {
     .then(response => response.text())
     .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
     .then(data => {
-      var cutoff = new Date().setDate(new Date().getDate() - 7); // 7 days ago
+      var cutoff = offsetDate(-7 * 24); // one week
       data.querySelectorAll("item").forEach(i => {
         var image = i.querySelector("image")?.innerHTML;
         var pubDate = Date.parse(i.querySelector("pubDate")?.innerHTML);
@@ -80,6 +87,6 @@ async function fetchRss(links) {
 
   // render to body
   for (var i of items) {
-    renderArticle(i);
+    renderArticle(i, offsetDate(-6)); // recent
   }
 }

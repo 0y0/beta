@@ -16,6 +16,9 @@ article {
   font: 12px/1.1 system-ui, sans-serif;
   text-align: right;
 }
+article.recent {
+  border: solid 2px cyan;
+}
 article img {
   display: block;
   min-height: 10rem;
@@ -29,7 +32,7 @@ article a {
   text-decoration: none;
   color: #63899A;
 }
-article a :hover, :focus {
+article a :hover {
   color: #455A64;
 }
 article a h2 {
