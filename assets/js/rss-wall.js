@@ -32,19 +32,17 @@ function formatTitle(str) {
 
 function renderArticle(item) {
   //console.log(item);
-  if (item.image) {
-    var ts = new Date(item.pubDate);
-    var html = `
-      <article>
-        <a href="${item.link}" target="_blank" rel="noopener">
-          <img src="${item.image}" alt="">
-          <h2>${item.title}</h2>
-          <span>${ts.toISOString().split('T')[0]}&nbsp;${ts.toTimeString().split(' ')[0]}</span>
-        </a>
-      </article>
-    `;
-    document.body.insertAdjacentHTML('beforeend', html);
-  }
+  var ts = new Date(item.pubDate);
+  var html = `
+    <article>
+      <a href="${item.link}" target="_blank" rel="noopener">
+        <img src="${item.image}" alt="">
+        <h2>${item.title}</h2>
+        <span>${ts.toISOString().split('T')[0]}&nbsp;${ts.toTimeString().split(' ')[0]}</span>
+      </a>
+    </article>
+  `;
+  document.body.insertAdjacentHTML('beforeend', html);
 }
 
 function asyncFetch(items, link) {
@@ -56,7 +54,7 @@ function asyncFetch(items, link) {
       data.querySelectorAll("item").forEach(i => {
         var image = i.querySelector("image")?.innerHTML;
         var pubDate = Date.parse(i.querySelector("pubDate")?.innerHTML);
-        if (image && pubDate > cutoff) {
+        if (image && image.indexOf('-thumb.') < 0 && pubDate > cutoff) {
           items.push({
             pubDate: pubDate,
             title: formatTitle(i.querySelector("title")?.innerHTML),
