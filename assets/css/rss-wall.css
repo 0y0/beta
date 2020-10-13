@@ -14,6 +14,7 @@ article {
   border-radius: 4px;
   overflow: hidden;
   font: 12px/1.1 system-ui, sans-serif;
+  text-align: right;
 }
 article img {
   display: block;
@@ -32,5 +33,12 @@ article a :hover, :focus {
 }
 article a h2 {
   padding: 1rem 1rem;
+  text-align: left;
   margin: 0;
+}
+article span {
+  display: inline-block;
+  padding: 0rem 1rem 0.5rem;
+  font: 8px system-ui, sans-serif;
+  color: #B0D0D0;
 }

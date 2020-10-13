@@ -15,8 +15,8 @@ const htmlEntities = {
   apos: '\''
 };
 
-function unescapeHTML(str) {
-  return str.replace(/\&([^;]+);/g, function (entity, entityCode) {
+function formatTitle(str) {
+  str = str.replace(/\&([^;]+);/g, function (entity, entityCode) {
     var match;
     if (entityCode in htmlEntities)
       return htmlEntities[entityCode];
@@ -27,37 +27,61 @@ function unescapeHTML(str) {
     else
       return entity;
   });
+  return str.substring(0, str.lastIndexOf('('));
 };
 
-function async_fetch(link) {
+function renderArticle(item) {
+  //console.log(item);
+  if (item.image) {
+    var ts = new Date(item.pubDate);
+    var html = `
+      <article>
+        <a href="${item.link}" target="_blank" rel="noopener">
+          <img src="${item.image}" alt="">
+          <h2>${item.title}</h2>
+          <span>${ts.toISOString().split('T')[0]}&nbsp;${ts.toTimeString().split(' ')[0]}</span>
+        </a>
+      </article>
+    `;
+    document.body.insertAdjacentHTML('beforeend', html);
+  }
+}
+
+function asyncFetch(items, link) {
   return fetch(proxyurl + link)
     .then(response => response.text())
     .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
     .then(data => {
-      const items = data.querySelectorAll("item");
-      let html = ``;
-      items.forEach(el => {
-        var image = el.querySelector("image");
-        if (image) {
-          var title = el.querySelector("title");
-          html += `
-            <article>
-              <a href="${el.querySelector("link").innerHTML}" target="_blank" rel="noopener">
-                <img src="${image.innerHTML}" alt="">
-                <h2>${unescapeHTML(title.innerHTML)}</h2>
-              </a>
-            </article>
-          `;
+      var cutoff = new Date().setDate(new Date().getDate() - 7); // 7 days ago
+      data.querySelectorAll("item").forEach(i => {
+        var image = i.querySelector("image")?.innerHTML;
+        var pubDate = Date.parse(i.querySelector("pubDate")?.innerHTML);
+        if (image && pubDate > cutoff) {
+          items.push({
+            pubDate: pubDate,
+            title: formatTitle(i.querySelector("title")?.innerHTML),
+            image: image,
+            link: i.querySelector("link")?.innerHTML,
+          });
         }
       });
-      document.body.insertAdjacentHTML('beforeend', html);
     });
 }
 
-async function fetch_rss(links) {
-  //for (var i = 0; i < links.length; i++) {
-  //  await async_fetch(links[i]);
+async function fetchRss(links) {
+  var items = [];
+
+  // load from sources
   for (var url of links) {
-    await async_fetch(url);
+    await asyncFetch(items, url);
+  }
+
+  // order from newest to oldest, remove duplicates
+  items.sort((a, b) => (a.pubDate < b.pubDate) ? 1 : -1);
+  items = items.filter((a, i, self) => i === self.findIndex((t) => (t.title === a.title)));
+
+  // render to body
+  for (var i of items) {
+    renderArticle(i);
   }
 }
