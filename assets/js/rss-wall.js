@@ -33,7 +33,8 @@ function formatTitle(str) {
     else
       return entity;
   });
-  return str.substring(0, str.lastIndexOf('('));
+  var p = str.lastIndexOf('(');
+  return p < 0 ? str : str.substring(0, p);
 };
 
 function renderArticle(item, recent) {
@@ -92,5 +93,48 @@ async function fetchRss(links) {
   // render to body
   for (var i of items) {
     renderArticle(i, offsetDate(-6)); // recent
+  }
+}
+
+function asyncFetchWP(items, link) {
+  return fetch(proxyurl + link)
+    .then(response => response.text())
+    .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
+    .then(data => {
+      data.querySelectorAll("item").forEach(i => {
+        var image = i.getElementsByTagName("media:thumbnail")[0]?.getAttribute("url");
+        var pubDate = Date.parse(i.querySelector("pubDate")?.innerHTML);
+        if (image) {
+          items.push({
+            pubDate: pubDate,
+            title: formatTitle(i.querySelector("title")?.innerHTML),
+            image: image + '?w=400',
+            link: i.querySelector("link")?.innerHTML,
+          });
+        }
+      });
+    });
+}
+
+async function fetchWP(links) {
+  var items = [];
+
+  // load from sources
+  for (var url of links) {
+    await asyncFetchWP(items, url);
+  }
+
+  // order from newest to oldest, remove duplicates
+  items.sort((a, b) => (a.pubDate < b.pubDate) ? 1 : -1);
+  items = items.filter((a, i, self) => i === self.findIndex((t) => (t.title === a.title)));
+
+  // remove splash
+  var splash = document.getElementById("splash");
+  splash.parentNode.removeChild(splash);
+
+  // render to body
+  for (var i of items) {
+    console.log(i);
+    renderArticle(i, offsetDate(-24)); // recent
   }
 }
