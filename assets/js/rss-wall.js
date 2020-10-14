@@ -85,6 +85,10 @@ async function fetchRss(links) {
   items.sort((a, b) => (a.pubDate < b.pubDate) ? 1 : -1);
   items = items.filter((a, i, self) => i === self.findIndex((t) => (t.title === a.title)));
 
+  // remove splash
+  var splash = document.getElementById("splash");
+  splash.parentNode.removeChild(splash);
+
   // render to body
   for (var i of items) {
     renderArticle(i, offsetDate(-6)); // recent
