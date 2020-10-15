@@ -53,33 +53,48 @@ function renderArticle(item, recent) {
   document.body.insertAdjacentHTML('beforeend', html);
 }
 
-function asyncFetch(items, link) {
+function asyncFetch(items, link, cutoff) {
   return fetch(proxyurl + link)
     .then(response => response.text())
     .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
     .then(data => {
-      var cutoff = offsetDate(-7 * 24); // one week
       data.querySelectorAll("item").forEach(i => {
-        var image = i.querySelector("image")?.innerHTML;
         var pubDate = Date.parse(i.querySelector("pubDate")?.innerHTML);
-        if (image && image.indexOf('-thumb.') < 0 && pubDate > cutoff) {
-          items.push({
-            pubDate: pubDate,
-            title: formatTitle(i.querySelector("title")?.innerHTML),
-            image: image,
-            link: i.querySelector("link")?.innerHTML,
-          });
+        if (!cutoff || pubDate > cutoff) {
+          var image = i.querySelector("image")?.innerHTML;
+          if (!image) {
+            image = i.getElementsByTagName("media:thumbnail")[0]?.getAttribute("url");
+          }
+          if (!image) {
+            var desc = i.querySelector("description")?.innerHTML;
+            var html = new DOMParser().parseFromString(desc, "text/html");
+            image = html.querySelector("img")?.getAttribute("src");
+          }
+          if (!image) {
+            var enc = i.getElementsByTagName("content:encoded")[0]?.innerHTML;
+            var html = new DOMParser().parseFromString(enc, "text/html");
+            image = html.querySelector("img")?.getAttribute("src");
+          }
+          if (image && image.indexOf('-thumb.') < 0) {
+            items.push({
+              pubDate: pubDate,
+              title: formatTitle(i.querySelector("title")?.innerHTML),
+              image: image + '?w=400',
+              link: i.querySelector("link")?.innerHTML,
+            });
+          }
         }
       });
     });
 }
 
-async function fetchRss(links) {
-  var items = [];
+async function fetchRss(links, hours) {
+  if (hours == null) hours = -7 * 24;
 
   // load from sources
+  var items = [];
   for (var url of links) {
-    await asyncFetch(items, url);
+    await asyncFetch(items, url, hours == 0 ? null : offsetDate(hours));
   }
 
   // order from newest to oldest, remove duplicates
@@ -92,49 +107,6 @@ async function fetchRss(links) {
 
   // render to body
   for (var i of items) {
-    renderArticle(i, offsetDate(-6)); // recent
-  }
-}
-
-function asyncFetchWP(items, link) {
-  return fetch(proxyurl + link)
-    .then(response => response.text())
-    .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
-    .then(data => {
-      data.querySelectorAll("item").forEach(i => {
-        var image = i.getElementsByTagName("media:thumbnail")[0]?.getAttribute("url");
-        var pubDate = Date.parse(i.querySelector("pubDate")?.innerHTML);
-        if (image) {
-          items.push({
-            pubDate: pubDate,
-            title: formatTitle(i.querySelector("title")?.innerHTML),
-            image: image + '?w=400',
-            link: i.querySelector("link")?.innerHTML,
-          });
-        }
-      });
-    });
-}
-
-async function fetchWP(links) {
-  var items = [];
-
-  // load from sources
-  for (var url of links) {
-    await asyncFetchWP(items, url);
-  }
-
-  // order from newest to oldest, remove duplicates
-  items.sort((a, b) => (a.pubDate < b.pubDate) ? 1 : -1);
-  items = items.filter((a, i, self) => i === self.findIndex((t) => (t.title === a.title)));
-
-  // remove splash
-  var splash = document.getElementById("splash");
-  splash.parentNode.removeChild(splash);
-
-  // render to body
-  for (var i of items) {
-    console.log(i);
     renderArticle(i, offsetDate(-24)); // recent
   }
 }

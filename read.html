@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>File 読み込み</title>
+  <script>
+    <!--
+      function init(){
+        var file = document.querySelector('#getfile');
+        file.onchange = () => {
+          var fileList = file.files;
+          var reader = new FileReader();
+          reader.readAsText(fileList[0]);
+          reader.onload = () => {   
+            var xml = new DOMParser().parseFromString(reader.result, "text/xml");
+            xml.querySelectorAll("item").forEach((item) => {
+              var desc = item.querySelector("description").innerHTML;
+              var html = new DOMParser().parseFromString(desc, "text/html");
+              var src = html.querySelector("img").getAttribute("src");
+              console.log(src);
+              document.querySelector('#preview').insertAdjacentHTML('beforeend', '<img src="'+src+'" height=200>');
+            });
+          };
+        };
+      };
+    // -->
+  </script>
+</head>
+<body onload="init();">
+  <input type="file" id="getfile" accept="text/*" >
+  <div id="preview" ></div>
+</body>
+</html>
