@@ -66,13 +66,23 @@ function asyncFetch(items, url, cutoff) {
             image = i.getElementsByTagName("media:thumbnail")[0]?.getAttribute("url");
           }
           if (!image) {
-            var desc = i.querySelector("description")?.innerHTML;
-            var html = new DOMParser().parseFromString(desc, "text/html");
-            image = html.querySelector("img")?.getAttribute("src");
+            for (var m of i.getElementsByTagName("media:content")) {
+              var url = m.getAttribute("url");
+              if (url.match(/(.jpg|.jpeg|.png|.gif)/i)) {
+                image = url;
+                break;
+              }
+            }
           }
           if (!image) {
             var enc = i.getElementsByTagName("content:encoded")[0]?.innerHTML;
             var html = new DOMParser().parseFromString(enc, "text/html");
+            image = html.querySelector("img")?.getAttribute("src");
+            if (!image) image = html.querySelector("img")?.getAttribute("file");
+          }
+          if (!image) {
+            var desc = i.querySelector("description")?.innerHTML;
+            var html = new DOMParser().parseFromString(desc, "text/html");
             image = html.querySelector("img")?.getAttribute("src");
           }
           if (image && image.indexOf('-thumb.') < 0) { // skip if no good picture
