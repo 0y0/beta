@@ -1,0 +1,22 @@
+---
+---
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+  <title>{{ site.name | xml_escape }}</title>
+  <description>RSS feed for posts</description>
+  <link>{{ site.url }}</link>
+  <lastBuildDate>{% for post in site.posts limit:1 %}{% unless post.link %}{{ post.date | date_to_rfc822 }}{% endunless %}{% endfor %}</lastBuildDate>
+  <ttl>1800</ttl>
+
+  {% for post in site.posts %}
+  <item>
+    <title>{{ post.title }}</title>
+    <description><![CDATA[{% if post.excerpt %}{{ post.excerpt }}{% else %}{{ post.content }}{% endif %}]]></description>
+    <link>{{ post.url }}</link>
+    <guid isPermaLink="true">{{ site.url }}{{ post.url }}</guid>
+    <pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
+  </item>
+  {% endfor %}
+</channel>
+</rss>
