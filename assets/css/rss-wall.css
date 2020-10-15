@@ -31,6 +31,7 @@ article {
   overflow: hidden;
   font: 12px/1.1 system-ui, sans-serif;
   text-align: right;
+  max-width: 20rem;
 }
 article.recent {
   border: solid 2px cyan;
