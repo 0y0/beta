@@ -3,7 +3,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
 <channel>
-  <title>{{ site.name | xml_escape }}</title>
+  <title>{{ site.title | xml_escape }}</title>
   <description>RSS feed for posts</description>
   <link>{{ site.url }}</link>
   <lastBuildDate>{% for post in site.posts limit:1 %}{% unless post.link %}{{ post.date | date_to_rfc822 }}{% endunless %}{% endfor %}</lastBuildDate>
@@ -18,7 +18,7 @@
     {%- else -%}
       {{ post.content | newline_to_br | strip_newlines | remove: '<br />' }}
     {%- endif -%}]]></description>
-    <link>{{ post.url }}</link>
+    <link>{{ site.url }}{{ post.url }}</link>
     <guid isPermaLink="true">{{ site.url }}{{ post.url }}</guid>
     <pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
   </item>

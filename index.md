@@ -17,6 +17,7 @@ layout: home
 ## Two-Column Layout
 
 {% include figure src="/kitten.jpg" alt="kitten" %}
+Rules of my house:
 1. Don't forget to feed me.
 1. Don't ignore me.
 1. All your keyboards are belong to me.
