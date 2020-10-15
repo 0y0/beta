@@ -52,8 +52,8 @@ function renderArticle(item, recent) {
   document.body.insertAdjacentHTML('beforeend', html);
 }
 
-function asyncFetch(items, link, cutoff) {
-  return fetch(proxyurl + link)
+function asyncFetch(items, url, cutoff) {
+  return fetch(url)
     .then(response => response.text())
     .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
     .then(data => {
@@ -88,13 +88,14 @@ function asyncFetch(items, link, cutoff) {
     });
 }
 
-async function fetchRss(links, hours) {
+async function fetchRss(links, hours, local) {
   if (hours == null) hours = 7 * 24; // default to one week
 
   // load from RSS sources
   var items = [];
   for (var url of links) {
-    await asyncFetch(items, url, hours == 0 ? null : offsetDate(-hours)); // no limit if hours is zero
+    var link = local ? url : proxyurl + url;
+    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours)); // no limit if hours is zero
   }
 
   // order from newest to oldest and remove duplicates
