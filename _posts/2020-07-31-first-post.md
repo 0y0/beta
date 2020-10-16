@@ -11,7 +11,6 @@ Kyhatty pitaako nae oikeaan han ole tai. Sinullekin vakituiset kokonainen tuo se
 * Kwoifhfsd
 * Vjsdfh ievdghf
 * Bj shdfdk sj ee
-
 {% include endfigure %}
 
 ## Rukoilen
