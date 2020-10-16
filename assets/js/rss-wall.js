@@ -1,4 +1,4 @@
-const proxyurl = "https://cors-anywhere.herokuapp.com/";
+const proxyurl = "https://k34f75nkq2.herokuapp.com/";
 
 const htmlEntities = {
   nbsp: ' ',
