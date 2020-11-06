@@ -5,20 +5,20 @@
 .MathJax_Display { text-align: left !important; }
 .row {
   display: flex;
+  gap: 1rem;
 }
-.c1 {
+.row .c1 {
   flex: 1 1;
   display: inline-block;
   vertical-align: top;
 }
-.c2 {
+.row .c2 {
   flex: 2 2;
   display: inline-block;
   vertical-align: top;
-  margin: 0rem 0rem 0rem 1rem;
 }
-.c1 img, .c2 img {
-  max-height: 800px;
+.row .c1 img, .row .c2 img {
+  max-height: 50%;
   width: auto;
   vertical-align: top;
 }

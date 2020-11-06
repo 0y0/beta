@@ -3,10 +3,15 @@ layout: post
 title: First post
 ---
 
-{% include figure src="/kitten.jpg" alt="kitten" %}
+## Proin eget tincidunt dolor
+Nulla pretium fringilla metus et vulputate. Ut massa neque, condimentum vitae orci id, gravida tempor eros. In bibendum pellentesque tempus. Nulla ullamcorper eleifend cursus. Quisque erat mi, sollicitudin vel rhoncus vitae, gravida sit amet tortor. Cras malesuada libero laoreet nulla mollis, eu dapibus tellus porta. Morbi sed nunc a urna interdum facilisis. Vestibulum non lacinia nisl. Maecenas id arcu consequat nisl egestas congue et ac risus. Proin ut mi eu odio dignissim scelerisque non eget nibh.
+
+{% include figure src="tool.jpg" %}
 Oliko ero pahaa kay juotu lahti saa. Silmat elivat te ne saaden soutaa ja me vailla kuuluu.
 
-Kyhatty pitaako nae oikeaan han ole tai. Sinullekin vakituiset kokonainen tuo sen pyyhkimaan. Kudomme viereen oikeata nyt pitaisi sentaan tai han jos hupaisa. Jo hetken suuren ai heidan. Eksynyt ne silmain te jo on hyvasti. Jaa juonut toinen saa valtaa paasta. Eri toi jos nuo jurottava rikkaiksi entisista viittiloi. 
+Kyhatty pitaako nae oikeaan han ole tai. Sinullekin vakituiset kokonainen tuo sen pyyhkimaan. Kudomme viereen oikeata nyt pitaisi sentaan tai han jos hupaisa. Jo hetken suuren ai heidan. 
+
+Eksynyt ne silmain te jo on hyvasti. Jaa juonut toinen saa valtaa paasta. Eri toi jos nuo jurottava rikkaiksi entisista viittiloi. 
 
 * Kwoifhfsd
 * Vjsdfh ievdghf
