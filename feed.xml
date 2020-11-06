@@ -10,8 +10,11 @@
   <ttl>1800</ttl>
 
   {% for post in site.posts %}
+  {% assign img_attr = post.content | split:'<img' | last | split:'>' | first %}
+  {% assign img_src = img_attr | split: 'src="' | last | split:'"' | first %}
   <item>
     <title>{{ post.title }}</title>
+    {%- if img_src != nil -%}<image>{{ site.url }}{{ img_src }}</image>{%- endif -%}
     <description><![CDATA[
     {%- if post.excerpt -%}
       {{ post.excerpt | newline_to_br | strip_newlines | remove: '<br />' }}
