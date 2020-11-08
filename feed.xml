@@ -8,23 +8,26 @@
   <link>{{ site.url }}</link>
   <lastBuildDate>{% for post in site.posts limit:1 %}{% unless post.link %}{{ post.date | date_to_rfc822 }}{% endunless %}{% endfor %}</lastBuildDate>
   <ttl>1800</ttl>
-
-  {% for post in site.posts %}
-  {% assign img_attr = post.content | split:'<img' | last | split:'>' | first %}
-  {% assign img_src = img_attr | split: 'src="' | last | split:'"' | first %}
+  {%- for post in site.posts %}
+  {% if post.content contains '<img ' %}
+    {% assign img_attr = post.content | split:'<img ' | last | split:'>' | first %}
+    {% assign img_src = img_attr | split: 'src="' | last | split:'"' | first %}
+  {% endif -%}
   <item>
     <title>{{ post.title }}</title>
-    {%- if img_src != nil -%}<image>{{ site.url }}{{ img_src }}</image>{%- endif -%}
+    <link>{{ site.url }}{{ post.url }}</link>
+    {%- if img_src != nil %}
+    <image>{{ site.url }}{{ img_src }}</image>
+    {%- endif %}
     <description><![CDATA[
     {%- if post.excerpt -%}
       {{ post.excerpt | newline_to_br | strip_newlines | remove: '<br />' }}
     {%- else -%}
       {{ post.content | newline_to_br | strip_newlines | remove: '<br />' }}
     {%- endif -%}]]></description>
-    <link>{{ site.url }}{{ post.url }}</link>
     <guid isPermaLink="true">{{ site.url }}{{ post.url }}</guid>
     <pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
   </item>
-  {% endfor %}
+  {%- endfor -%}
 </channel>
 </rss>

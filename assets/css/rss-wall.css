@@ -17,8 +17,9 @@
 body {
   margin: 2rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   grid-gap: 2rem;
+  justify-content: start;
   background: url(/assets/img/starfield.jpg) no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;

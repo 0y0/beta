@@ -3,6 +3,7 @@ theme: jekyll-theme-primer
 github: [metadata]
 
 title: Beta
+permalink: /posts/:categories/:year-:month-:day/:title.html
 
 kramdown:
   parse_block_html: true
