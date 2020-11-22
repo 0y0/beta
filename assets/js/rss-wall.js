@@ -52,7 +52,7 @@ function renderArticle(item, recent) {
   document.body.insertAdjacentHTML('beforeend', html);
 }
 
-function asyncFetch(items, url, cutoff) {
+function asyncFetch(items, url, cutoff, exclude) {
   return fetch(url)
     .then(response => response.text())
     .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
@@ -60,6 +60,10 @@ function asyncFetch(items, url, cutoff) {
       data.querySelectorAll("item").forEach(i => {
         var pubDate = Date.parse(i.querySelector("pubDate")?.innerHTML);
         if (!cutoff || pubDate > cutoff) {
+          // exclude items matching regexp
+          var link = i.querySelector("link")?.innerHTML;
+          if (exclude && link.match(exclude)) return;
+
           // look for a picture
           var image = i.querySelector("image")?.innerHTML;
           if (!image) {
@@ -102,7 +106,7 @@ function asyncFetch(items, url, cutoff) {
               pubDate: pubDate,
               title: formatTitle(i.querySelector("title")?.innerHTML),
               image: image,
-              link: i.querySelector("link")?.innerHTML,
+              link: link,
             });
           }
         }
@@ -110,14 +114,14 @@ function asyncFetch(items, url, cutoff) {
     });
 }
 
-async function fetchRss(links, hours, local) {
+async function fetchRss(links, hours, local, exclude) {
   if (hours == null) hours = 7 * 24; // default to one week
 
   // load from RSS sources
   var items = [];
   for (var url of links) {
     var link = local ? url : proxyurl + url;
-    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours)); // no limit if hours is zero
+    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), exclude); // no limit if hours is zero
   }
 
   // order from newest to oldest and remove duplicates
