@@ -116,12 +116,13 @@ function asyncFetch(items, url, cutoff, exclude) {
 
 async function fetchRss(links, hours, local, exclude) {
   if (hours == null) hours = 7 * 24; // default to one week
+  var xp = exclude ? new RegExp(exclude) : null; // pattern to exclude
 
   // load from RSS sources
   var items = [];
   for (var url of links) {
     var link = local ? url : proxyurl + url;
-    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), exclude); // no limit if hours is zero
+    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), xp); // no limit if hours is zero
   }
 
   // order from newest to oldest and remove duplicates
