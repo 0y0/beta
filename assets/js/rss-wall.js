@@ -40,11 +40,11 @@ function formatTitle(str) {
 function renderArticle(item, recent) {
   var ts = new Date(item.pubDate);
   var cl = (recent && ts > recent) ? ' class="recent"' : '';
+  var img = item.image ? '<img src="' + item.image + '" alt="">\n        ' : '';
   var html = `
     <article${cl}>
       <a href="${item.link}" target="_blank" rel="noopener">
-        <img src="${item.image}" alt="">
-        <h2>${item.title}</h2>
+        ${img}<h2>${item.title}</h2>
         <span>${ts.toISOString().split('T')[0]}&nbsp;${ts.toTimeString().split(' ')[0]}</span>
       </a>
     </article>
@@ -52,12 +52,29 @@ function renderArticle(item, recent) {
   document.body.insertAdjacentHTML('beforeend', html);
 }
 
-function asyncFetch(items, url, cutoff, exclude) {
+function asyncFetch(items, url, cutoff, exclude, everything) {
   return fetch(url)
     .then(response => response.text())
     .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
     .then(data => {
-      data.querySelectorAll("item").forEach(i => {
+      if (data.querySelector("feed")) data.querySelectorAll("entry").forEach(e => {
+        var pubDate = Date.parse(e.querySelector("published")?.innerHTML);
+        if (!cutoff || pubDate > cutoff) {
+          // exclude items matching regexp
+          var link = e.querySelector("link")?.getAttribute("href").replace('.youtube.com/watch?', '.youtube.com/watch?autoplay=1&');
+          if (exclude && link.match(exclude)) return;
+
+          // look for a picture
+          var image = e.getElementsByTagName("media:thumbnail")[0]?.getAttribute("url");
+          items.push({
+            pubDate: pubDate,
+            title: formatTitle(e.querySelector("title")?.innerHTML),
+            image: image,
+            link: link,
+          });
+        }
+      });
+      if (data.querySelector("rss")) data.querySelectorAll("item").forEach(i => {
         var pubDate = Date.parse(i.querySelector("pubDate")?.innerHTML);
         if (!cutoff || pubDate > cutoff) {
           // exclude items matching regexp
@@ -109,12 +126,19 @@ function asyncFetch(items, url, cutoff, exclude) {
               link: link,
             });
           }
+          else if (everything) {
+            items.push({
+              pubDate: pubDate,
+              title: formatTitle(i.querySelector("title")?.innerHTML),
+              link: link,
+            });
+          }
         }
       });
     });
 }
 
-async function fetchRss(links, hours, local, exclude) {
+async function fetchRss(links, hours, local, exclude, everything) {
   if (hours == null) hours = 7 * 24; // default to one week
   var xp = exclude ? new RegExp(exclude) : null; // pattern to exclude
 
@@ -122,7 +146,7 @@ async function fetchRss(links, hours, local, exclude) {
   var items = [];
   for (var url of links) {
     var link = local ? url : proxyurl + url;
-    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), xp); // no limit if hours is zero
+    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), xp, everything);
   }
 
   // order from newest to oldest and remove duplicates
