@@ -59,6 +59,7 @@ function asyncFetch(items, url, cutoff, exclude, everything) {
     .then(data => {
       if (data.querySelector("feed")) data.querySelectorAll("entry").forEach(e => {
         var pubDate = Date.parse(e.querySelector("published")?.innerHTML);
+        if (isNaN(pubDate)) return; // ignore items with invalid date
         if (!cutoff || pubDate > cutoff) {
           // exclude items matching regexp
           var link = e.querySelector("link")?.getAttribute("href").replace('.youtube.com/watch?', '.youtube.com/watch?autoplay=1&');
@@ -76,10 +77,17 @@ function asyncFetch(items, url, cutoff, exclude, everything) {
       });
       if (data.querySelector("rss")) data.querySelectorAll("item").forEach(i => {
         var pubDate = Date.parse(i.querySelector("pubDate")?.innerHTML);
+        if (isNaN(pubDate)) return; // ignore items with invalid date
         if (!cutoff || pubDate > cutoff) {
           // exclude items matching regexp
           var link = i.querySelector("link")?.innerHTML;
           if (exclude && link.match(exclude)) return;
+
+          // extract title
+          var t = i.querySelector("title")?.innerHTML;
+          var c0 = t.indexOf('<![CDATA[');
+          var c1 = t.lastIndexOf(']]>');
+          var title = c0 >=0 ? t.substring(c0+9, c1) : t;
 
           // look for a picture
           var image = i.querySelector("image")?.innerHTML;
@@ -112,6 +120,7 @@ function asyncFetch(items, url, cutoff, exclude, everything) {
             var html = new DOMParser().parseFromString(desc, "text/html");
             for (var m of html.getElementsByTagName("img")) {
               var src = m.getAttribute("src");
+              if (src.indexOf('data:') >= 0) continue; // skip embedded images
               if (src && src.indexOf('emoji') < 0) {
                 image = src;
                 break;
@@ -121,7 +130,7 @@ function asyncFetch(items, url, cutoff, exclude, everything) {
           if (image && image.indexOf('-thumb.') < 0) { // skip if no good picture
             items.push({
               pubDate: pubDate,
-              title: formatTitle(i.querySelector("title")?.innerHTML),
+              title: title,
               image: image,
               link: link,
             });
@@ -129,7 +138,7 @@ function asyncFetch(items, url, cutoff, exclude, everything) {
           else if (everything) {
             items.push({
               pubDate: pubDate,
-              title: formatTitle(i.querySelector("title")?.innerHTML),
+              title: title,
               link: link,
             });
           }
