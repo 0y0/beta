@@ -87,7 +87,7 @@ function asyncFetch(items, url, cutoff, exclude, everything) {
           var t = i.querySelector("title")?.innerHTML;
           var c0 = t.indexOf('<![CDATA[');
           var c1 = t.lastIndexOf(']]>');
-          var title = c0 >=0 ? t.substring(c0+9, c1) : t;
+          var title = formatTitle(c0 >=0 ? t.substring(c0+9, c1) : t);
 
           // look for a picture
           var image = i.querySelector("image")?.innerHTML;
