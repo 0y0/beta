@@ -21,7 +21,7 @@ function offsetDate(hours) {
   return now;
 }
 
-function formatTitle(str) {
+function decodeEntity(str) {
   str = str.replace(/\&([^;]+);/g, function (entity, entityCode) {
     var match;
     if (entityCode in htmlEntities)
@@ -72,7 +72,7 @@ function asyncFetch(items, url, cutoff, exclude, everything) {
           var image = e.getElementsByTagName("media:thumbnail")[0]?.getAttribute("url");
           items.push({
             pubDate: pubDate,
-            title: formatTitle(e.querySelector("title")?.innerHTML),
+            title: decodeEntity(e.querySelector("title")?.innerHTML),
             image: image,
             link: link,
           });
@@ -90,7 +90,7 @@ function asyncFetch(items, url, cutoff, exclude, everything) {
           var t = i.querySelector("title")?.innerHTML;
           var c0 = t.indexOf('<![CDATA[');
           var c1 = t.lastIndexOf(']]>');
-          var title = formatTitle(c0 >=0 ? t.substring(c0+9, c1) : t);
+          var title = decodeEntity(c0 >=0 ? t.substring(c0+9, c1) : t);
 
           // look for a picture
           var image = i.querySelector("image")?.innerHTML;
@@ -120,7 +120,7 @@ function asyncFetch(items, url, cutoff, exclude, everything) {
           }
           if (!image) {
             var desc = i.querySelector("description")?.innerHTML;
-            var html = new DOMParser().parseFromString(desc, "text/html");
+            var html = new DOMParser().parseFromString(decodeEntity(desc), "text/html");
             for (var m of html.getElementsByTagName("img")) {
               var src = m.getAttribute("src");
               if (src.indexOf('data:') >= 0) continue; // skip embedded images
@@ -169,7 +169,7 @@ async function fetchRss(links, hours, local, exclude, everything) {
   await Promise.allSettled(batch).then(results => {
     // order from newest to oldest and remove duplicates
     items.sort((a, b) => (a.pubDate < b.pubDate) ? 1 : -1);
-    items = items.filter((a, i, self) => i === self.findIndex((t) => (t.title === a.title)));
+    items = items.filter((a, i, self) => i === self.findIndex((t) => (t.title === a.title && t.pubDate === a.pubDate)));
   });
 
   // stop splash and restore title
