@@ -54,7 +54,10 @@ function renderArticle(item, recent) {
 
 function asyncFetch(items, url, cutoff, exclude, everything) {
   return fetch(url)
-    .then(response => response.text())
+    .then(response => {
+      if (response.ok) return response.text();
+      else throw new Error("status " + response.status + " fetching: " + url);
+    })
     .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
     .then(data => {
       if (data.querySelector("feed")) data.querySelectorAll("entry").forEach(e => {
@@ -150,21 +153,29 @@ function asyncFetch(items, url, cutoff, exclude, everything) {
 async function fetchRss(links, hours, local, exclude, everything) {
   if (hours == null) hours = 7 * 24; // default to one week
   var xp = exclude ? new RegExp(exclude) : null; // pattern to exclude
+  var title = document.title; // make a copy
 
   // load from RSS sources
   var items = [];
-  for (var url of links) {
+  var count = links.length;
+  document.title = title + ": " + count--; // show progress in title
+  var batch = links.map(async url => {
     var link = local ? url : proxyurl + url;
-    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), xp, everything);
-  }
+    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), xp, everything).finally(_ => {
+      document.title = title + ": " + count--; // update title
+    })
+    .catch(err => console.log(err));
+  });
+  await Promise.allSettled(batch).then(results => {
+    // order from newest to oldest and remove duplicates
+    items.sort((a, b) => (a.pubDate < b.pubDate) ? 1 : -1);
+    items = items.filter((a, i, self) => i === self.findIndex((t) => (t.title === a.title)));
+  });
 
-  // order from newest to oldest and remove duplicates
-  items.sort((a, b) => (a.pubDate < b.pubDate) ? 1 : -1);
-  items = items.filter((a, i, self) => i === self.findIndex((t) => (t.title === a.title)));
-
-  // stop splash
+  // stop splash and restore title
   var splash = document.getElementById("splash");
   splash.parentNode.removeChild(splash);
+  document.title = title;
 
   // render to body
   for (var i of items) {
