@@ -151,9 +151,13 @@ function asyncFetch(items, url, cutoff, exclude, everything) {
 }
 
 async function fetchRss(links, hours, local, exclude, everything) {
+  const params = new URLSearchParams(window.location.search);
+  const expire = params.get("expire");
+  if (expire && expire >= 0) hours = expire; // override parameter
+
   if (hours == null) hours = 7 * 24; // default to one week
-  var xp = exclude ? new RegExp(exclude) : null; // pattern to exclude
-  var title = document.title; // make a copy
+  const xpat = exclude ? new RegExp(exclude) : null; // pattern to exclude
+  const title = document.title; // make a copy
 
   // load from RSS sources
   var items = [];
@@ -161,7 +165,7 @@ async function fetchRss(links, hours, local, exclude, everything) {
   document.title = title + ": " + count--; // show progress in title
   var batch = links.map(async url => {
     var link = local ? url : proxyurl + url;
-    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), xp, everything).finally(_ => {
+    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), xpat, everything).finally(_ => {
       document.title = title + ": " + count--; // update title
     })
     .catch(err => console.log(err));
@@ -178,7 +182,11 @@ async function fetchRss(links, hours, local, exclude, everything) {
   document.title = title;
 
   // render to body
-  for (var i of items) {
-    renderArticle(i, offsetDate(-24)); // highlight recent articles
+  const highlight = params.get("highlight");
+  const hhours = (highlight && highlight >= 0) ? highlight : 24; // default to one day
+  const amount = params.get("amount");
+  const end = (amount > 0 && amount <= items.length) ? amount : items.length;
+  for (var i of items.slice(0, end)) {
+    renderArticle(i, hhours == 0 ? null : offsetDate(-hhours));
   }
 }
