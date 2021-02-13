@@ -58,9 +58,9 @@ function asyncFetch(items, url, cutoff, exclude, everything) {
       if (response.ok) return response.text();
       else throw new Error("status " + response.status + " fetching: " + url);
     })
-    .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
-    .then(data => {
-      if (data.querySelector("feed")) data.querySelectorAll("entry").forEach(e => {
+    .then(text => {
+      const xml = new window.DOMParser().parseFromString(text, "text/xml");
+      if (xml.querySelector("feed")) xml.querySelectorAll("entry").forEach(e => {
         var pubDate = Date.parse(e.querySelector("published")?.innerHTML);
         if (isNaN(pubDate)) return; // ignore items with invalid date
         if (!cutoff || pubDate > cutoff) {
@@ -78,7 +78,7 @@ function asyncFetch(items, url, cutoff, exclude, everything) {
           });
         }
       });
-      if (data.querySelector("rss")) data.querySelectorAll("item").forEach(i => {
+      if (xml.querySelector("rss")) xml.querySelectorAll("item").forEach(i => {
         var pubDate = Date.parse(i.querySelector("pubDate")?.innerHTML);
         if (isNaN(pubDate)) return; // ignore items with invalid date
         if (!cutoff || pubDate > cutoff) {
