@@ -182,10 +182,10 @@ async function fetchRss(links, hours, local, exclude, everything) {
   document.title = title;
 
   // render to body
-  const highlight = params.get("highlight");
-  const hhours = (highlight && highlight >= 0) ? highlight : 24; // default to one day
-  const amount = params.get("amount");
-  const end = (amount > 0 && amount <= items.length) ? amount : items.length;
+  const recent = params.get("recent");
+  const hhours = (recent && recent >= 0) ? recent : 24; // default to one day
+  const crop = params.get("crop");
+  const end = (crop > 0 && crop <= items.length) ? crop : items.length;
   for (var i of items.slice(0, end)) {
     renderArticle(i, hhours == 0 ? null : offsetDate(-hhours));
   }
