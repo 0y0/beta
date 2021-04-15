@@ -165,7 +165,8 @@ async function fetchRss(links, hours, local, exclude, everything) {
   document.title = title + ": " + count--; // show progress in title
   var batch = links.map(async url => {
     var link = local ? url : proxyurl + url;
-    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), xpat, everything).finally(_ => {
+    var all = params.get("all");
+    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), xpat, all || everything).finally(_ => {
       document.title = title + ": " + count--; // update title
     })
     .catch(err => console.log(err));
