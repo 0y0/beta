@@ -178,6 +178,7 @@
         if (isNaN(parseInt(value))) return;
         if ((field_number == 2 || field_number == 4) && value < 5) return;
         if ((field_number == 3) && value < 20) return;
+        if (chart_data.length>0 && point.x - chart_data[chart_data.length-1].x > 7200000) chart_data.push(null);
         if (!isNaN(parseInt(value))) { chart_data.push(point); }
       });
 

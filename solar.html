@@ -5,57 +5,49 @@
 <meta equiv="expires" content="-1">
 <meta name="viewport" content="width=device-width, initial-scale=0.9" />
 <html>
-<title>Ambient Dashboard</title>
-<head>
+	<title>Solar Dashboard</title>
+  <head>
   <script type="text/javascript" src="/assets/js/license.js"></script>
   <script type="text/javascript" src="/assets/js/highcharts-5.0.14.js"></script>
   <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
   <style type="text/css">
-  body { background-color: #e8e8ff; width: 100%; margin: 0; padding: 0; font-family: sans-serif; }
-  #title { background-color: #c0c0ff; width: 400px; font-weight: bold; text-align: center; margin: 5px 10px 0 5px; }
+  body { background-color: #ffe9e9; width: 100%; margin: 0; padding: 0; font-family: sans-serif; }
+  #title { background-color: #ffb0b0; width: 400px; font-weight: bold; text-align: center; margin: 5px 10px 0 5px; }
   #timestamp { width: 400px; text-align: center; font-size: 8pt; margin: 0; }
-  #chart-container1 { width: 400px; height: 120px; margin: 5px 5px 0 5px; }
-  #chart-container2 { width: 400px; height: 120px; margin: 5px 5px 0 5px; }
-  #chart-container3 { width: 400px; height: 120px; margin: 5px 5px 0 5px; }
-  #chart-container4 { width: 400px; height: 120px; margin: 5px 5px 0 5px; }
-  #chart-container5 { width: 400px; height: 120px; margin: 5px 5px 0 5px; }
+  #chart-container1 { width: 400px; height: 150px; margin: 5px 5px 0 5px; }
+  #chart-container2 { width: 400px; height: 150px; margin: 5px 5px 0 5px; }
+  #chart-container3 { width: 400px; height: 150px; margin: 5px 5px 0 5px; }
+  #chart-container4 { width: 400px; height: 150px; margin: 5px 5px 0 5px; }
   .highcharts-column-series .highcharts-point { stroke-width: 0; }
-  .big-box { width: 400px; height: 120px; line-height: 120px; text-align: center; transition: all 0.3s linear; }
+  .big-box { width: 400px; height: 150px; line-height: 150px; text-align: center; transition: all 0.3s linear; }
   .big-label { font-size: 30px; font-weight: 900; filter: drop-shadow(0 0 3px white); color: black; -webkit-text-stroke: 0.5px white;}
   .big-box:hover { opacity: 0; }
   </style>
 
   <script type="text/javascript">
-  // variables for the first series
-  var series_1_channel_id = 67171;
+  var series_1_channel_id = 103113;
   var series_1_field_number = 1;
-  var series_1_read_api_key = '2FDAAAC8U03REC5B';
-  var series_1_results = 288;
-  var series_1_color = 'orange';
+  var series_1_read_api_key = 'YE4YOG9WUW9T7RDS';
+  var series_1_results = 300;
+  var series_1_color = 'red';
 
   var series_2_channel_id = series_1_channel_id;
   var series_2_field_number = 2;
   var series_2_read_api_key = series_1_read_api_key;
   var series_2_results = series_1_results;
-  var series_2_color = 'red';
+  var series_2_color = 'green';
 
   var series_3_channel_id = series_1_channel_id;
   var series_3_field_number = 3;
   var series_3_read_api_key = series_1_read_api_key;
   var series_3_results = series_1_results;
-  var series_3_color = 'purple';
+  var series_3_color = 'green';
 
   var series_4_channel_id = series_1_channel_id;
   var series_4_field_number = 4;
   var series_4_read_api_key = series_1_read_api_key;
   var series_4_results = series_1_results;
-  var series_4_color = 'blue';
-  
-  var series_5_channel_id = series_1_channel_id;
-  var series_5_field_number = 5;
-  var series_5_read_api_key = series_1_read_api_key;
-  var series_5_results = series_1_results;
-  var series_5_color = 'green';
+  var series_4_color = 'purple';
   
   // user's timezone offset
   var my_offset = new Date().getTimezoneOffset();
@@ -64,16 +56,14 @@
 
   // when the document is ready
   $(document).on('ready', function() {
-    var c1 = addChart('chart-container1','Light','');
+    var c1 = addChart('chart-container1','Line Power','');
     addSeries(c1, series_1_channel_id, series_1_field_number, series_1_read_api_key, series_1_results, series_1_color);
-    var c2 = addChart('chart-container2','Pressure','');
-    addSeries(c2, series_3_channel_id, series_3_field_number, series_3_read_api_key, series_3_results, series_3_color);
-    var c3 = addChart('chart-container3','Temperature','');
-    addSeries(c3, series_2_channel_id, series_2_field_number, series_2_read_api_key, series_2_results, series_2_color);
-    var c4 = addChart('chart-container4','Humidity','');
+    var c2 = addChart('chart-container2','Monitor Voltage','');
+    addSeries(c2, series_2_channel_id, series_2_field_number, series_2_read_api_key, series_2_results, series_2_color);
+    var c3 = addChart('chart-container3','Line Voltage','');
+    addSeries(c3, series_3_channel_id, series_3_field_number, series_3_read_api_key, series_3_results, series_3_color);
+    var c4 = addChart('chart-container4','Line Current','');
     addSeries(c4, series_4_channel_id, series_4_field_number, series_4_read_api_key, series_4_results, series_4_color);
-    var c5 = addChart('chart-container5','Dewpoint','');
-    addSeries(c5, series_5_channel_id, series_5_field_number, series_5_read_api_key, series_5_results, series_5_color);
   });
 
   // add the base chart
@@ -87,13 +77,13 @@
         renderTo: container,
         defaultSeriesType: 'line',
         backgroundColor: '#ffffff',
-        marginTop: 24,
+        marginTop: 28,
         marginLeft: 50,
         spacingTop: 10,
         spacingBottom: 5,
         events: { }
       },
-      title: { 
+      title: {
         text: chart_title,
         style: { 'fontSize': '12pt' }
       },
@@ -116,12 +106,12 @@
         formatter: function() {
           var d = new Date(this.x + (my_offset*60000));
           var n = (this.point.name === undefined) ? '' : '<br>' + this.point.name;
-          return this.y.toFixed(container == 'chart-container1' ? 0 : 2) + '</b>' + n + '<br>' + d.toDateString() + '<br>' + d.toTimeString().replace(/\(.*\)/, "");
+          return this.y.toFixed(2) + '</b>' + n + '<br>' + d.toDateString() + '<br>' + d.toTimeString().replace(/\(.*\)/, "");
         }
       },
       xAxis: {
-        min: Date.now() - my_offset*60000 - 4*86400*1000,
-        max: Date.now() - my_offset*60000,
+        min: Date.now() - my_offset*60000 - 3*86400*1000, 
+        max: Date.now() - my_offset*60000 + 900000,
         type: 'datetime',
       },
       yAxis: {
@@ -136,30 +126,21 @@
         style: { color: '#D62020' }
       }
     };
-
+    
     if (container == 'chart-container1') {
-      chartOptions.yAxis.tickInterval = 50;
-      chartOptions.yAxis.min = 0;
+      chartOptions.yAxis.tickInterval = 0.5;
     }
     else if (container == 'chart-container2') {
-      chartOptions.yAxis.tickInterval = 5;
-      chartOptions.yAxis.softMax = 1013.25;
-      chartOptions.yAxis.softMin = 1013.25;
-      chartOptions.plotOptions.series.zones = [{ value: 1000, color: 'magenta' }];
+      chartOptions.yAxis.tickInterval = 0.1;
+      chartOptions.yAxis.softMax = 3.5;
+      chartOptions.yAxis.softMin = 3.0;
     }
     else if (container == 'chart-container3') {
-      chartOptions.yAxis.tickInterval = 1;
-      chartOptions.yAxis.softMax = 27;
-      chartOptions.yAxis.softMin = 24;
+      chartOptions.yAxis.tickInterval = 5;
+      chartOptions.yAxis.softMin = 0;
     }
     else if (container == 'chart-container4') {
-      chartOptions.yAxis.tickInterval = 20;
-      chartOptions.yAxis.min = 0;
-    }
-    else if (container == 'chart-container5') {
-      chartOptions.yAxis.tickInterval = 5;
-      chartOptions.yAxis.min = 10;
-      chartOptions.yAxis.max = 25;
+      chartOptions.yAxis.tickInterval = 50;
     }
 
     // draw the chart
@@ -171,7 +152,7 @@
     var field_name = 'field' + field_number;
 
     // get the data with a webservice call
-    $.getJSON('https://k34f75nkq2.herokuapp.com/https://api.thingspeak.com/channels/' + channel_id + '/fields/' + field_number + '.json?offset=0&round=2&days=4&api_key=' + api_key, function(data) {
+    $.getJSON('https://k34f75nkq2.herokuapp.com/https://api.thingspeak.com/channels/' + channel_id + '/fields/' + field_number + '.json?offset=0&round=2&days=3&api_key=' + api_key, function(data) {
 
       // blank array for holding chart data
       var chart_data = [];
@@ -184,12 +165,14 @@
         if (value == null) return;
         point.x = getChartDate(this.created_at);
         point.y = parseFloat(value);
-        if (field_number == 1) point.y /= 6;
+        if (field_number != 4) point.y /= 1000;
+        if (field_number == 1 || field_number == 4) point.y = -point.y;
         // add location if possible
         if (this.location) { point.name = this.location; }
         // if a numerical value exists add it
+        if (isNaN(parseInt(value))) return;
         if (chart_data.length>0 && point.x - chart_data[chart_data.length-1].x > 7200000) chart_data.push(null);
-        if (!isNaN(parseInt(value))) { chart_data.push(point); }
+        chart_data.push(point);
       });
 
       var last = chart_data[chart_data.length-1];
@@ -201,8 +184,7 @@
         zIndex: 0
       });
 
-      var v = last.y.toFixed(field_number == 1 ? 0 : 2);
-      chart.renderer.label('<div class="big-box"><span class="big-label">' + v + '</span></div>', 0, 0, null, null,null, true).add();
+      chart.renderer.label('<div class="big-box"><span class="big-label">' + last.y.toFixed(2) + '</span></div>', 0, 0, null, null,null, true).add();
 
       // add the chart data
       chart.addSeries({ data: chart_data, name: data.channel[field_name], color: color });
@@ -215,17 +197,16 @@
     return Date.parse(d) - (my_offset * 60000);
   }
   </script>
+
 </head>
 
 <body>
-  <div id="title" onclick="window.top.location=window.location">Ambient</div>
+  <div id="title" onclick="window.top.location=window.location">Solar</div>
   <div id="timestamp"></div>
   <div id="chart-container1"></div>
-  <div id="chart-container2"></div>
   <div id="chart-container3"></div>
   <div id="chart-container4"></div>
-  <div id="chart-container5"></div>
+  <div id="chart-container2"></div>
 </body>
 
 </html>
-
