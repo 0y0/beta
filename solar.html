@@ -152,7 +152,7 @@
     var field_name = 'field' + field_number;
 
     // get the data with a webservice call
-    $.getJSON('https://k34f75nkq2.herokuapp.com/https://api.thingspeak.com/channels/' + channel_id + '/fields/' + field_number + '.json?offset=0&round=2&days=3&api_key=' + api_key, function(data) {
+    $.getJSON('https://api.thingspeak.com/channels/' + channel_id + '/fields/' + field_number + '.json?offset=0&round=2&days=3&api_key=' + api_key, function(data) {
 
       // blank array for holding chart data
       var chart_data = [];
