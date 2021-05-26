@@ -59,6 +59,7 @@ function asyncFetch(items, url, cutoff, rex, everything) {
       else throw new Error("status " + response.status + " fetching: " + url);
     })
     .then(text => {
+      var count = 0;
       const xml = new window.DOMParser().parseFromString(text, "text/xml");
       if (xml.querySelector("feed")) xml.querySelectorAll("entry").forEach(e => {
         var pubDate = Date.parse(e.querySelector("published")?.innerHTML);
@@ -138,6 +139,7 @@ function asyncFetch(items, url, cutoff, rex, everything) {
               image: image,
               link: link,
             });
+            count++;
           }
           else if (everything) {
             items.push({
@@ -145,9 +147,11 @@ function asyncFetch(items, url, cutoff, rex, everything) {
               title: title,
               link: link,
             });
+            count++;
           }
         }
       });
+      return count;
     });
 }
 
@@ -167,7 +171,9 @@ async function fetchRss(links, hours, local, exclude, everything) {
   var batch = links.map(async url => {
     var link = local ? url : proxyurl + url;
     var all = params.get("all");
-    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), rex, all || everything).finally(_ => {
+    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), rex, all || everything).then(num => {
+      console.log(url + " [" + num + "]");
+    }).finally(_ => {
       document.title = title + ": " + count--; // update title
     })
     .catch(err => console.log(err));
