@@ -52,7 +52,7 @@ function renderArticle(item, recent) {
   document.body.insertAdjacentHTML('beforeend', html);
 }
 
-function asyncFetch(items, url, cutoff, exclude, everything) {
+function asyncFetch(items, url, cutoff, rex, everything) {
   return fetch(url)
     .then(response => {
       if (response.ok) return response.text();
@@ -65,14 +65,16 @@ function asyncFetch(items, url, cutoff, exclude, everything) {
         if (isNaN(pubDate)) return; // ignore items with invalid date
         if (!cutoff || pubDate > cutoff) {
           // exclude items matching regexp
+          var title = decodeEntity(e.querySelector("title")?.innerHTML);
+          if (rex && title.match(rex)) return;
           var link = e.querySelector("link")?.getAttribute("href").replace('.youtube.com/watch?', '.youtube.com/watch?autoplay=1&');
-          if (exclude && link.match(exclude)) return;
+          if (rex && link.match(rex)) return;
 
           // look for a picture
           var image = e.getElementsByTagName("media:thumbnail")[0]?.getAttribute("url");
           items.push({
             pubDate: pubDate,
-            title: decodeEntity(e.querySelector("title")?.innerHTML),
+            title: title,
             image: image,
             link: link,
           });
@@ -83,14 +85,13 @@ function asyncFetch(items, url, cutoff, exclude, everything) {
         if (isNaN(pubDate)) return; // ignore items with invalid date
         if (!cutoff || pubDate > cutoff) {
           // exclude items matching regexp
-          var link = i.querySelector("link")?.innerHTML;
-          if (exclude && link.match(exclude)) return;
-
-          // extract title
           var t = i.querySelector("title")?.innerHTML;
           var c0 = t.indexOf('<![CDATA[');
           var c1 = t.lastIndexOf(']]>');
           var title = decodeEntity(c0 >=0 ? t.substring(c0+9, c1) : t);
+          if (rex && title.match(rex)) return;
+          var link = i.querySelector("link")?.innerHTML;
+          if (rex && link.match(rex)) return;
 
           // look for a picture
           var image = i.querySelector("image")?.innerHTML;
@@ -156,7 +157,7 @@ async function fetchRss(links, hours, local, exclude, everything) {
   if (expire && expire >= 0) hours = expire; // override parameter
 
   if (hours == null) hours = 7 * 24; // default to one week
-  const xpat = exclude ? new RegExp(exclude) : null; // pattern to exclude
+  const rex = exclude ? new RegExp(exclude) : null; // pattern to exclude
   const title = document.title; // make a copy
 
   // load from RSS sources
@@ -166,7 +167,7 @@ async function fetchRss(links, hours, local, exclude, everything) {
   var batch = links.map(async url => {
     var link = local ? url : proxyurl + url;
     var all = params.get("all");
-    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), xpat, all || everything).finally(_ => {
+    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), rex, all || everything).finally(_ => {
       document.title = title + ": " + count--; // update title
     })
     .catch(err => console.log(err));
