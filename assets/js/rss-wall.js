@@ -37,6 +37,10 @@ function decodeEntity(str) {
   return p < 0 ? str : str.substring(0, p);
 };
 
+function unwrap(str) {
+  return str ? str.replace(/^\s*<!\[CDATA\[|\]\]>\s*$/g, '') : str;
+}
+
 function renderArticle(item, recent) {
   var ts = new Date(item.pubDate);
   var cl = (recent && ts > recent) ? ' class="recent"' : '';
@@ -62,7 +66,7 @@ function asyncFetch(items, url, cutoff, rex, everything) {
       var count = 0;
       const xml = new window.DOMParser().parseFromString(text, "text/xml");
       if (xml.querySelector("feed")) xml.querySelectorAll("entry").forEach(e => {
-        var pubDate = Date.parse(e.querySelector("published")?.innerHTML);
+        var pubDate = Date.parse(unwrap(e.querySelector("published")?.innerHTML));
         if (isNaN(pubDate)) return; // ignore items with invalid date
         if (!cutoff || pubDate > cutoff) {
           // exclude items matching regexp
@@ -82,20 +86,16 @@ function asyncFetch(items, url, cutoff, rex, everything) {
         }
       });
       if (xml.querySelector("rss")) xml.querySelectorAll("item").forEach(i => {
-        var pubDate = Date.parse(i.querySelector("pubDate")?.innerHTML);
+        var pubDate = Date.parse(unwrap(i.querySelector("pubDate")?.innerHTML));
         if (isNaN(pubDate)) return; // ignore items with invalid date
         if (!cutoff || pubDate > cutoff) {
-          // exclude items matching regexp
-          var t = i.querySelector("title")?.innerHTML;
-          var c0 = t.indexOf('<![CDATA[');
-          var c1 = t.lastIndexOf(']]>');
-          var title = decodeEntity(c0 >=0 ? t.substring(c0+9, c1) : t);
+          // exclude items matching rex
+          var title = decodeEntity(unwrap(i.querySelector("title")?.innerHTML));
           if (rex && title.match(rex)) return;
-          var link = i.querySelector("link")?.innerHTML;
+          var link = unwrap(i.querySelector("link")?.innerHTML);
           if (rex && link.match(rex)) return;
-
           // look for a picture
-          var image = i.querySelector("image")?.innerHTML;
+          var image = unwrap(i.querySelector("image")?.innerHTML);
           if (!image) {
             image = i.getElementsByTagName("media:thumbnail")[0]?.getAttribute("url");
           }
@@ -109,26 +109,30 @@ function asyncFetch(items, url, cutoff, rex, everything) {
             }
           }
           if (!image) {
-            var enc = i.getElementsByTagName("content:encoded")[0]?.innerHTML;
-            var html = new DOMParser().parseFromString(enc, "text/html");
-            for (var m of html.getElementsByTagName("img")) {
-              var src = m.getAttribute("src");
-              if (!src) src = m.getAttribute("file");
-              if (src && src.indexOf('emoji') < 0) {
-                image = src;
-                break;
+            var enc = unwrap(i.getElementsByTagName("content:encoded")[0]?.innerHTML);
+            if (enc) {
+              var html = new DOMParser().parseFromString(enc, "text/html");
+              for (var m of html.getElementsByTagName("img")) {
+                var src = m.getAttribute("src");
+                if (!src) src = m.getAttribute("file");
+                if (src && src.indexOf('emoji') < 0) {
+                  image = src;
+                  break;
+                }
               }
             }
           }
           if (!image) {
-            var desc = i.querySelector("description")?.innerHTML;
-            var html = new DOMParser().parseFromString(decodeEntity(desc), "text/html");
-            for (var m of html.getElementsByTagName("img")) {
-              var src = m.getAttribute("src");
-              if (src.indexOf('data:') >= 0) continue; // skip embedded images
-              if (src && src.indexOf('emoji') < 0) {
-                image = src;
-                break;
+            var desc = unwrap(i.querySelector("description")?.innerHTML);
+            if (desc) {
+              var html = new DOMParser().parseFromString(decodeEntity(desc), "text/html");
+              for (var m of html.getElementsByTagName("img")) {
+                var src = m.getAttribute("src");
+                if (src.indexOf('data:') >= 0) continue; // skip embedded images
+                if (src && src.indexOf('emoji') < 0) {
+                  image = src;
+                  break;
+                }
               }
             }
           }
