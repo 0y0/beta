@@ -125,7 +125,7 @@ function asyncFetch(items, url, cutoff, rex, everything) {
           if (!image) {
             var desc = unwrap(i.querySelector("description")?.innerHTML);
             if (desc) {
-              var html = new DOMParser().parseFromString(decodeEntity(desc), "text/html");
+              var html = new DOMParser().parseFromString(desc, "text/html");
               for (var m of html.getElementsByTagName("img")) {
                 var src = m.getAttribute("src");
                 if (src.indexOf('data:') >= 0) continue; // skip embedded images
