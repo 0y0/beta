@@ -87,6 +87,7 @@ function asyncFetch(items, url, cutoff, rex, everything) {
       });
       if (xml.querySelector("rss")) xml.querySelectorAll("item").forEach(i => {
         var pubDate = Date.parse(unwrap(i.querySelector("pubDate")?.innerHTML));
+        if (!pubDate) pubDate = Date.parse(i.getElementsByTagName("dcterms:modified")[0]?.innerHTML);
         if (isNaN(pubDate)) return; // ignore items with invalid date
         if (!cutoff || pubDate > cutoff) {
           // exclude items matching rex
@@ -119,6 +120,10 @@ function asyncFetch(items, url, cutoff, rex, everything) {
                   image = src;
                   break;
                 }
+              }
+              if (title.indexOf("J-RISQ") > 0) { // go for better title
+                var t = html.getElementsByTagName("p")[0]?.innerHTML;
+                if (t) title = t;
               }
             }
           }
