@@ -164,13 +164,14 @@ function asyncFetch(items, url, cutoff, rex, everything) {
     });
 }
 
-async function fetchRss(links, hours, local, exclude, everything) {
+async function fetchRss(links, hours, local, filter, everything) {
   const params = new URLSearchParams(window.location.search);
   const expire = params.get("expire");
   if (expire && expire >= 0) hours = expire; // override parameter
 
   if (hours == null) hours = 7 * 24; // default to one week
-  const rex = exclude ? new RegExp(exclude) : null; // pattern to exclude
+  const exclude = params.get("exclude");
+  const rex = exclude ? RegExp(exclude) : filter ? new RegExp(filter) : null; // pattern to exclude
   const title = document.title; // make a copy
 
   // load from RSS sources
