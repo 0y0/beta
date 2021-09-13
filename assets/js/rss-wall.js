@@ -191,7 +191,7 @@ async function fetchRss(links, hours, local, filter, everything) {
   await Promise.allSettled(batch).then(results => {
     // order from newest to oldest and remove duplicates
     items.sort((a, b) => (a.pubDate < b.pubDate) ? 1 : -1);
-    items = items.filter((a, i, self) => i === self.findIndex((t) => (t.title === a.title && t.image === a.image)));
+    items = items.filter((a, i, self) => i === self.findIndex((t) => (t.link === a.link)));
   });
 
   // stop splash and restore title
