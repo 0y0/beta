@@ -48,7 +48,7 @@ function renderArticle(item, recent) {
   var link = item.link;
   if (link.match(/https?:\/\/nitter.net\/.*/)) {
     var re = /https?:\/\/[^ ]*/;
-    link = title.match(re);
+    link = title.match(re) || link;
     title = title.replace(re, '');
   }
   var html = `
