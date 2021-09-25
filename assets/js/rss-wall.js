@@ -49,7 +49,7 @@ function renderArticle(item, recent) {
   if (link.match(/https?:\/\/nitter.net\/.*/)) {
     var re = /https?:\/\/[^ ]*/;
     link = title.match(re) || link;
-    title = title.replace(re, '');
+    title = title.replace(re, '').replace(/^RT?\s+[^:]*:/, '');
   }
   var html = `
     <article${cl}>
