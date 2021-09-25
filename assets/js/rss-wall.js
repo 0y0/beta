@@ -33,8 +33,7 @@ function decodeEntity(str) {
     else
       return entity;
   });
-  var p = str.lastIndexOf('(');
-  return p < 0 ? str : str.substring(0, p);
+  return str.replace(/\(.*\)\s*$/, ''); // remove source info
 };
 
 function unwrap(str) {
@@ -45,10 +44,17 @@ function renderArticle(item, recent) {
   var ts = new Date(item.pubDate);
   var cl = (recent && ts > recent) ? ' class="recent"' : '';
   var img = item.image ? '<img src="' + item.image + '" alt="">\n        ' : '';
+  var title = item.title;
+  var link = item.link;
+  if (link.match(/https?:\/\/nitter.net\/.*/)) {
+    var re = /https?:\/\/[^ ]*/;
+    link = title.match(re);
+    title = title.replace(re, '');
+  }
   var html = `
     <article${cl}>
-      <a href="${item.link}" target="_blank" rel="noopener">
-        ${img}<h2>${item.title}</h2>
+      <a href="${link}" target="_blank" rel="noopener">
+        ${img}<h2>${title}</h2>
         <span>${ts.toISOString().split('T')[0]}&nbsp;${ts.toTimeString().split(' ')[0]}</span>
       </a>
     </article>
