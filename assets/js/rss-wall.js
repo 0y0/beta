@@ -1,3 +1,22 @@
+/*
+  RSS Wall Utility
+
+  Main function: fetchRss(links, hours, local, filter, everything)
+  Function parameters:
+    links = a list of URLs providing RSS feeds (mandatory)
+    hours = exclude items with pubDate older than this (default: 24*7)
+    local = disable CORS proxy (for local feeds, default: false)
+    filter = exclude items with title or link matching regex (default: none)
+    everything = show every RSS items (for debugging, default: false)
+
+  HTTP parameters:
+    expire = override "hours" parameter (default: 24*7)
+    exclude = override "filter" parameter (default: none)
+    all = enable "everything" parameter (default: false)
+    recent = set item highlight threshold in hours (default: 24)
+    crop = set maximum number of items to show (default: no limit)
+*/
+
 const proxyurl = "https://k34f75nkq2.herokuapp.com/";
 
 const htmlEntities = {
