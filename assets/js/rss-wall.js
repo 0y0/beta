@@ -4,7 +4,7 @@
   Main function: fetchRss(links, hours, local, filter, everything)
   Function parameters:
     links = a list of URLs providing RSS feeds (mandatory)
-    hours = exclude items with pubDate older than this (default: 24*7)
+    hours = exclude items with pubDate older than this (default: 24*7, 0=disabled)
     local = disable CORS proxy (for local feeds, default: false)
     filter = exclude items with title or link matching regex (default: none)
     everything = show every RSS items (for debugging, default: false)
