@@ -65,7 +65,7 @@ function renderArticle(item, recent) {
   var img = item.image ? '<img src="' + item.image + '" alt="">\n        ' : '';
   var title = item.title;
   var link = item.link;
-  if (link.match(/https?:\/\/nitter.net\/.*/)) {
+  if (link.match(/https?:\/\/twitter.076.ne.jp\/.*/)) {
     var re = /https?:\/\/[^ ]*/;
     link = title.match(re) || link;
     title = title.replace(re, '').replace(/^RT?\s+[^:]*:/, '');
