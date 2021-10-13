@@ -40,6 +40,12 @@ function offsetDate(hours) {
   return now;
 }
 
+function formatDatetime(dt) {
+  var date = `${dt.getYear()+1900}-` + `${dt.getMonth()+1}-`.padStart(3,'0') + `${dt.getDate()}`.padStart(2,'0');
+  var time = dt.toTimeString().split(' ')[0];
+  return date + ' ' + time;
+}
+
 function decodeEntity(str) {
   str = str.replace(/\&([^;]+);/g, function (entity, entityCode) {
     var match;
@@ -74,7 +80,7 @@ function renderArticle(item, recent) {
     <article${cl}>
       <a href="${link}" target="_blank" rel="noopener">
         ${img}<h2>${title}</h2>
-        <span>${ts.toISOString().split('T')[0]}&nbsp;${ts.toTimeString().split(' ')[0]}</span>
+        <span>${formatDatetime(ts)}</span>
       </a>
     </article>
   `;
