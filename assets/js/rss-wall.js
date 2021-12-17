@@ -208,14 +208,14 @@ async function fetchRss(links, hours, local, filter, everything) {
   // load from RSS sources
   var items = [];
   var count = links.length;
-  document.title = title + ": " + count--; // show progress in title
+  document.title = title + " " + "<".repeat(count--); // show progress in title
   var batch = links.map(async url => {
     var link = local ? url : proxyurl + url;
     var all = params.get("all");
     await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), rex, all || everything).then(num => {
       console.log(url + " [" + num + "]");
     }).finally(_ => {
-      document.title = title + ": " + count--; // update title
+      document.title = title + " " + "<".repeat(count--); // update title
     })
     .catch(err => console.log(err));
   });
