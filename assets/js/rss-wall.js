@@ -65,12 +65,16 @@ function unwrap(str) {
   return str ? str.replace(/^\s*<!\[CDATA\[|\]\]>\s*$/g, '') : str;
 }
 
+function dropTags(str) {
+  return str ? str.replace(/\s+#.*/g, '') : str;
+}
+
 function renderArticle(item, recent) {
   var ts = new Date(item.pubDate);
   var cl = (recent && ts > recent) ? ' class="recent"' : '';
   var img = item.image ? '<img src="' + item.image + '" alt="">\n        ' : '';
-  var title = item.title;
-  var link = item.link;
+  var title = dropTags(item.title);
+  var link = dropTags(item.link);
   if (link.match(/https?:\/\/twitter.076.ne.jp\/.*/)) {
     var re = /https?:\/\/[^ ]*/;
     link = title.match(re) || link;
