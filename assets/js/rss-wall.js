@@ -76,7 +76,7 @@ function renderArticle(item, recent) {
   var title = dropTags(item.title);
   var link = dropTags(item.link);
   if (link.match(/https?:\/\/twitter.076.ne.jp\/.*/)) {
-    var re = /https?:\/\/[^ ]*/;
+    var re = /https?:\/\/\S+/;
     link = title.match(re) || link;
     title = title.replace(re, '').replace(/^RT?\s+[^:]*:/, '');
   }
