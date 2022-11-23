@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/assets/ico/picasso.ico" />
+<html>
+<title>Poet</title>
+<head>
+  <link rel="stylesheet" href="/assets/css/rss-wall.css">
+  <script type="text/javascript" src="/assets/js/rss-wall.js"></script>
+</head>
+<body onload="fetchRss([
+  'https://note.com/hashtag/%E4%BB%8A%E6%97%A5%E3%81%AE%E7%9F%AD%E6%AD%8C/rss', //今日の短歌
+  'https://note.com/hashtag/404%E7%BE%8E%E8%A1%93%E9%A4%A8/rss', //404美術館
+  'https://note.com/hashtag/%E4%BF%B3%E5%8F%A5%E9%83%A8/rss', //俳句部
+  'https://note.com/hashtag/%E7%B5%B5/rss', //絵
+], 7*24, false, 'AI')"></body>
+<div id="splash">読み込み中</div>
+</html>

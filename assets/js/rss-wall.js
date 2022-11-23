@@ -112,12 +112,23 @@ function asyncFetch(items, url, cutoff, rex, everything) {
 
           // look for a picture
           var image = e.getElementsByTagName("media:thumbnail")[0]?.getAttribute("url");
-          items.push({
-            pubDate: pubDate,
-            title: title,
-            image: image,
-            link: link,
-          });
+          if (image) {
+            items.push({
+              pubDate: pubDate,
+              title: title,
+              image: image,
+              link: link,
+            });
+            count++;
+          }
+          else if (everything) {
+            items.push({
+              pubDate: pubDate,
+              title: title,
+              link: link,
+            });
+            count++;
+          }
         }
       });
       if (xml.querySelector("rss")) xml.querySelectorAll("item").forEach(i => {
@@ -134,6 +145,9 @@ function asyncFetch(items, url, cutoff, rex, everything) {
           var image = unwrap(i.querySelector("image")?.innerHTML);
           if (!image) {
             image = i.getElementsByTagName("media:thumbnail")[0]?.getAttribute("url");
+          }
+          if (!image) {
+            image = i.getElementsByTagName("media:thumbnail")[0]?.innerHTML;
           }
           if (!image) {
             for (var m of i.getElementsByTagName("media:content")) {
@@ -176,6 +190,9 @@ function asyncFetch(items, url, cutoff, rex, everything) {
               }
             }
           }
+          if (!image) {
+            image = unwrap(i.getElementsByTagName("note:creatorImage")[0]?.innerHTML);
+          }
           if (image && image.indexOf('-thumb.') < 0) { // skip if no good picture
             items.push({
               pubDate: pubDate,
@@ -215,7 +232,7 @@ async function fetchRss(links, hours, local, filter, everything) {
   document.title = title + " " + "<".repeat(count--); // show progress in title
   var batch = links.map(async url => {
     var link = local ? url : proxyurl + url;
-    var all = params.get("all");
+    var all = params.get("all") != null;
     await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), rex, all || everything).then(num => {
       console.log(url + " [" + num + "]");
     }).finally(_ => {
@@ -242,4 +259,5 @@ async function fetchRss(links, hours, local, filter, everything) {
   for (var i of items.slice(0, end)) {
     renderArticle(i, hhours == 0 ? null : offsetDate(-hhours));
   }
+  console.log("rendered: " + end);
 }
