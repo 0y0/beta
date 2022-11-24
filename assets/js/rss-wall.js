@@ -34,6 +34,13 @@ const htmlEntities = {
   apos: '\''
 };
 
+function userLang() {
+  var lang = window.navigator.language;
+  if (!lang) lang = window.navigator["browserLanguage"];
+  if (!lang) lang = "en-US";
+  return lang.substring(0, 2);
+}
+
 function offsetDate(hours) {
   var now = new Date();
   now.setHours(now.getHours() + hours);
@@ -88,7 +95,7 @@ function renderArticle(item, recent) {
       </a>
     </article>
   `;
-  document.body.insertAdjacentHTML('beforeend', html);
+  document.body.insertAdjacentHTML("beforeend", html);
 }
 
 function asyncFetch(items, url, cutoff, rex, everything) {
@@ -217,6 +224,10 @@ function asyncFetch(items, url, cutoff, rex, everything) {
 }
 
 async function fetchRss(links, hours, local, filter, everything) {
+  const lang = userLang();
+  const splash = document.getElementById("splash");
+  if (splash) splash.innerHTML = (lang=="ja" ? '読み込み中' : 'Loading');
+
   const params = new URLSearchParams(window.location.search);
   const expire = params.get("expire");
   if (expire && expire >= 0) hours = expire; // override parameter
@@ -247,7 +258,6 @@ async function fetchRss(links, hours, local, filter, everything) {
   });
 
   // stop splash and restore title
-  var splash = document.getElementById("splash");
   splash.parentNode.removeChild(splash);
   document.title = title;
 

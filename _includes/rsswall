@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/assets/ico/{{ include.ico }}" />
+<html>
+<title>{{ include.title }}</title>
+<head>
+  <link rel="stylesheet" href="/assets/css/rss-wall.css">
+  <script type="text/javascript" src="/assets/js/rss-wall.js"></script>
+  <script>
+window.onload = function() {
+{{- include.onload -}}
+}
+  </script>
+</head>
+<div id="splash"/>
+</html>
