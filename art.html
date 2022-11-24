@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="icon" href="/assets/ico/picasso.ico" />
-<html>
-<title>Art News</title>
-<head>
-  <link rel="stylesheet" href="/assets/css/rss-wall.css">
-  <script type="text/javascript" src="/assets/js/rss-wall.js"></script>
-</head>
-<body onload="fetchRss([
+---
+---
+{% capture onload %}
+fetchRss([
   'https://news.yahoo.co.jp/rss/media/btecho/all.xml',
   'https://news.yahoo.co.jp/rss/media/imaonline/all.xml',
-])"></body>
-<div id="splash">読み込み中</div>
-</html>
+]);
+{% endcapture %}
+{%- include rsswall onload=onload title="Art News" ico="picasso.ico" -%}

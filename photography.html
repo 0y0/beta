@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<html>
-<title>Photography</title>
-<head>
-  <link rel="stylesheet" href="/assets/css/rss-wall.css">
-  <script type="text/javascript" src="/assets/js/rss-wall.js"></script>
-</head>
-<body onload="fetchRss([
+---
+---
+{% capture onload %}
+fetchRss([
   'https://amagablog.com/feed/',
   'https://badkins55.wordpress.com/feed/',
   'https://bgiltphotos.wordpress.com/feed/',
@@ -21,6 +16,6 @@
   'https://thepoetryofphotography.wordpress.com/feed/',
   'https://www.outdoorphotographer.com/blog/feed/',
   'https://note.com/hashtag/%E6%95%A3%E6%AD%A9%E5%86%99%E7%9C%9F/rss', //散歩写真
-], 360)"></body>
-<div id="splash">Loading</div>
-</html>
+], 360);
+{% endcapture %}
+{%- include rsswall onload=onload title="Photography" ico="house.ico" -%}

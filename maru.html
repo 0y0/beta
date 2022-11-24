@@ -1,16 +1,9 @@
-<!DOCTYPE html>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="icon" href="/assets/ico/cat.ico" />
-<html>
-<title>Maru Videos</title>
-<head>
-  <link rel="stylesheet" href="/assets/css/rss-wall.css">
-  <script type="text/javascript" src="/assets/js/rss-wall.js"></script>
-</head>
-<body onload="fetchRss([
+---
+---
+{% capture onload %}
+fetchRss([
   'https://www.youtube.com/feeds/videos.xml?channel_id=UCRVruzlQF5cqpw9jQgIgNdw',
   'https://sisinmaru.com/feed',
-], 0, false, '（動画）', true)">
-</body>
-<div id="splash">読み込み中</div>
-</html>
+], 0, false, '（動画）', true);
+{% endcapture %}
+{%- include rsswall onload=onload title="Maru" ico="cat.ico" -%}

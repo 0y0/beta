@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="icon" href="/assets/ico/parfait.ico" />
-<html>
-<title>Canada</title>
-<head>
-  <link rel="stylesheet" href="/assets/css/rss-wall.css">
-  <script type="text/javascript" src="/assets/js/rss-wall.js"></script>
-</head>
-<body onload="fetchRss([
+---
+---
+{% capture onload %}
+fetchRss([
   'https://globalnews.ca/world/feed/',
   'https://o.canada.com/feed/',
-])"></body>
-<div id="splash">Loading</div>
-</html>
+]);
+{% endcapture %}
+{%- include rsswall onload=onload title="Canada" ico="parfait.ico" -%}
