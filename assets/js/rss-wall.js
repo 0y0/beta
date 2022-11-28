@@ -34,6 +34,10 @@ const htmlEntities = {
   apos: '\''
 };
 
+function hashCode(str) {
+  return str.split("").reduce((s, c) => Math.imul(31, s) + c.charCodeAt(0) | 0, 0);
+}
+
 function userLang() {
   var lang = window.navigator.language;
   if (!lang) lang = window.navigator["browserLanguage"];
@@ -132,6 +136,7 @@ function asyncFetch(items, url, cutoff, rex, everything) {
             items.push({
               pubDate: pubDate,
               title: title,
+              //image: "https://picsum.photos/seed/" + hashCode(link) + "/400/300.webp",
               link: link,
             });
             count++;
@@ -197,9 +202,6 @@ function asyncFetch(items, url, cutoff, rex, everything) {
               }
             }
           }
-          if (!image) {
-            image = unwrap(i.getElementsByTagName("note:creatorImage")[0]?.innerHTML);
-          }
           if (image && image.indexOf('-thumb.') < 0) { // skip if no good picture
             items.push({
               pubDate: pubDate,
@@ -213,6 +215,7 @@ function asyncFetch(items, url, cutoff, rex, everything) {
             items.push({
               pubDate: pubDate,
               title: title,
+              //image: "https://picsum.photos/seed/" + hashCode(link) + "/400/300.webp",
               link: link,
             });
             count++;
