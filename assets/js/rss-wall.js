@@ -254,7 +254,9 @@ async function fetchRss(links, hours, local, filter, everything) {
     })
     .catch(err => console.log(err));
   });
+  const was = Date.now();
   await Promise.allSettled(batch).then(results => {
+    console.log("fetch time: " + ((Date.now() - was)/1000).toFixed(2) + "s");
     // order from newest to oldest and remove duplicates
     items.sort((a, b) => (a.pubDate < b.pubDate) ? 1 : -1);
     items = items.filter((a, i, self) => i === self.findIndex((t) => (t.title == a.title || t.link == a.link)));
@@ -272,5 +274,5 @@ async function fetchRss(links, hours, local, filter, everything) {
   for (var i of items.slice(0, end)) {
     renderArticle(i, hhours == 0 ? null : offsetDate(-hhours));
   }
-  console.log("rendered: " + end);
+  console.log("render count: " + end);
 }
