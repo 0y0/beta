@@ -104,7 +104,7 @@ function renderArticle(item, recent) {
 }
 
 function asyncFetch(items, url, cutoff, rex, everything) {
-  return fetch(url, { mode: "no-cors" })
+  return fetch(url)
     .then(response => {
       if (response.ok) return response.text();
       else throw new Error("status " + response.status + " fetching: " + url);
