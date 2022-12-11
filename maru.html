@@ -3,7 +3,7 @@
 {% capture onload %}
 fetchRss([
   'https://www.youtube.com/feeds/videos.xml?channel_id=UCRVruzlQF5cqpw9jQgIgNdw',
-  'https://sisinmaru.com/feed',
+  'https://sisinmaru.com/feed/',
 ], 0, false, '（動画）', true);
 {% endcapture %}
 {%- include rsswall onload=onload title="Maru" ico="cat.ico" -%}
