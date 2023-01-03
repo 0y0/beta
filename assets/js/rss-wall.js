@@ -154,6 +154,9 @@ function asyncFetch(items, url, cutoff, rex, everything) {
           if (rex && title.match(rex)) return;
           var link = unwrap(i.querySelector("link")?.innerHTML);
           if (rex && link.match(rex)) return;
+          var desc = unwrap(i.querySelector("description")?.innerHTML);
+          if (rex && desc.match(rex)) return;
+
           // look for a picture
           var image = unwrap(i.querySelector("image")?.innerHTML);
           if (!image) {
@@ -190,7 +193,6 @@ function asyncFetch(items, url, cutoff, rex, everything) {
             }
           }
           if (!image) {
-            var desc = unwrap(i.querySelector("description")?.innerHTML);
             if (desc) {
               var html = new DOMParser().parseFromString(desc, "text/html");
               for (var m of html.getElementsByTagName("img")) {
