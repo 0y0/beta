@@ -15,10 +15,10 @@
   50% { opacity: 1 }
 }
 body {
-  margin: 2rem;
+  margin: 1rem;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  grid-gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(200px, 30%), 1fr));
+  grid-gap: 1.5rem;
   justify-content: start;
   background: url(/assets/img/starfield.jpg) no-repeat center center fixed;
   -webkit-background-size: cover;
@@ -31,9 +31,9 @@ article {
   background: #ECEFF1;
   border-radius: 5px;
   overflow: hidden;
-  font: 12px/1.1 system-ui, sans-serif;
+  font: 65%/1.1 system-ui, sans-serif;
   text-align: right;
-  max-width: 20rem;
+  max-width: fit-content;
 }
 article.recent {
   border: solid 2px cyan;
