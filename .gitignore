@@ -8,3 +8,4 @@ _posts
 vendor
 .DS_Store
 .vscode
+.bundle
