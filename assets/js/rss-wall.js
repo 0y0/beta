@@ -87,11 +87,6 @@ function renderArticle(item, recent) {
   var img = item.image ? '<img src="' + item.image + '" alt="">\n        ' : '';
   var title = dropTags(item.title);
   var link = dropTags(item.link);
-  if (link.match(/https?:\/\/twitter.076.ne.jp\/.*/)) {
-    var re = /https?:\/\/\S+/;
-    link = title.match(re) || link;
-    title = title.replace(re, '').replace(/^RT?\s+[^:]*:/, '');
-  }
   var html = `
     <article${cl}>
       <a href="${link}" target="_blank" rel="noopener">
@@ -205,6 +200,16 @@ function asyncFetch(items, url, cutoff, rex, everything) {
               }
             }
           }
+
+          // give priority to link within the title
+          if (link.match(/https?:\/\/twitter.076.ne.jp\/.*/)) {
+            var re = /https?:\/\/\S+/;
+            link = title.match(re) || link;
+            if (Array.isArray(link)) link = link[0];
+            title = title.replace(re, '').replace(/^RT?\s+[^:]*:/, '');
+          }
+
+          // add item
           if (image && image.indexOf('-thumb.') < 0) { // skip if no good picture
             items.push({
               pubDate: pubDate,
