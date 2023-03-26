@@ -15,6 +15,7 @@
     all = enable "everything" parameter (default: false)
     recent = set item highlight threshold in hours (default: 24)
     crop = set maximum number of items to show (default: no limit)
+    debug = print debug messages
 */
 
 //const proxyurl = "https://k34f75nkq2.onrender.com/";
@@ -89,6 +90,7 @@ function renderArticle(item, recent) {
   var link = dropTags(item.link);
   var html = `
     <article${cl}>
+      <div>${link}</div>
       <a href="${link}" target="_blank" rel="noopener">
         ${img}<h2>${title}</h2>
         <span>${formatDatetime(ts)}</span>
@@ -98,7 +100,7 @@ function renderArticle(item, recent) {
   document.body.insertAdjacentHTML("beforeend", html);
 }
 
-function asyncFetch(items, url, cutoff, rex, everything) {
+function asyncFetch(items, url, cutoff, rex, everything, debug) {
   return fetch(url)
     .then(response => {
       if (response.ok) return response.text();
@@ -107,7 +109,10 @@ function asyncFetch(items, url, cutoff, rex, everything) {
     .then(text => {
       var count = 0;
       const xml = new window.DOMParser().parseFromString(text, "text/xml");
+
+      // ATOM support
       if (xml.querySelector("feed")) xml.querySelectorAll("entry").forEach(e => {
+        if (debug) console.log(e);
         var pubDate = Date.parse(unwrap(e.querySelector("published")?.innerHTML));
         if (isNaN(pubDate)) return; // ignore items with invalid date
         if (!cutoff || pubDate > cutoff) {
@@ -139,11 +144,14 @@ function asyncFetch(items, url, cutoff, rex, everything) {
           }
         }
       });
+
+      // RSS support
       if (xml.querySelector("rss")) xml.querySelectorAll("item").forEach(i => {
+        if (debug) console.log(i);
         var pubDate = Date.parse(unwrap(i.querySelector("pubDate")?.innerHTML));
         if (!pubDate) pubDate = Date.parse(i.getElementsByTagName("dcterms:modified")[0]?.innerHTML);
         if (isNaN(pubDate)) return; // ignore items with invalid date
-        if (!cutoff || pubDate > cutoff) {
+        if (!cutoff || pubDate > cutoff || everything) {
           // exclude items matching rex
           var title = decodeEntity(unwrap(i.querySelector("title")?.innerHTML));
           if (rex && title.match(rex)) return;
@@ -209,23 +217,22 @@ function asyncFetch(items, url, cutoff, rex, everything) {
             title = title.replace(re, '').replace(/^RT?\s+[^:]*:/, '');
           }
 
+          let item = {
+            pubDate: pubDate,
+            title: title,
+            image: image,
+            link: link,
+          };
+
+          if (debug) console.log(item);
+
           // add item
           if (image && image.indexOf('-thumb.') < 0) { // skip if no good picture
-            items.push({
-              pubDate: pubDate,
-              title: title,
-              image: image,
-              link: link,
-            });
+            items.push(item);
             count++;
           }
           else if (everything) {
-            items.push({
-              pubDate: pubDate,
-              title: title,
-              //image: "https://picsum.photos/seed/" + hashCode(link) + "/400/300.webp",
-              link: link,
-            });
+            items.push(item);
             count++;
           }
         }
@@ -245,6 +252,7 @@ async function fetchRss(links, hours, local, filter, everything) {
 
   if (hours == null) hours = 7 * 24; // default to one week
   const exclude = params.get("exclude");
+  const debug = params.get("debug");
   const rex = exclude ? RegExp(exclude, 'i') : filter ? new RegExp(filter, 'i') : null; // pattern to exclude
   const title = document.title; // make a copy
 
@@ -255,12 +263,14 @@ async function fetchRss(links, hours, local, filter, everything) {
   var batch = links.map(async url => {
     var link = local ? url : proxyurl + url;
     var all = params.get("all") != null;
-    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), rex, all || everything).then(num => {
-      console.log(url + " [" + num + "]");
-    }).finally(_ => {
-      document.title = title + " " + "<".repeat(--count); // update title
-    })
-    .catch(err => console.log(err));
+    await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), rex, all || everything, debug)
+      .then(num => {
+        console.log(url + " [" + num + "]");
+      })
+      .finally(_ => {
+        document.title = title + " " + "<".repeat(--count); // update title
+      })
+      .catch(err => console.log(err));
   });
   const was = Date.now();
   await Promise.allSettled(batch).then(results => {

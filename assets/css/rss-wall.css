@@ -46,6 +46,13 @@ article img {
   margin-right: auto;
   box-shadow: 0 0 3px #B0BEC5;
 }
+article div {
+  position: absolute;
+  overflow: visible;
+  color: rgba(255, 255, 255, 0.001);
+  cursor: pointer;
+  width: 100%;
+}
 article a {
   display: block;
   width: 100%;
@@ -59,6 +66,7 @@ article a :hover {
 article a h2 {
   padding: 1rem 1rem;
   text-align: left;
+  overflow-wrap: break-word;
   margin: 0;
 }
 article span {
@@ -67,3 +75,4 @@ article span {
   font: 9px system-ui, sans-serif;
   color: #B0D0D0;
 }
+
