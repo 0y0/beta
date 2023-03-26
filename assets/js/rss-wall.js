@@ -213,10 +213,10 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
           if (link.match(/https?:\/\/twitter\./)) {
             if (title.match(/^R to @/)) return; // skip retweets
             // give priority to link within the title
-            var re = /https?:\/\/\S+/;
+            var re = /https?:\/\/\S+/g;
             link = title.match(re) || link;
             if (Array.isArray(link)) link = link[0];
-            title = title.replace(re, '').replace(/^RT?\s+[^:]*:/, '');
+            title = title.replaceAll(re, '').replace(/^RT?\s+[^:]*:/, '');
           }
 
           let item = {
