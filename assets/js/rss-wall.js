@@ -209,8 +209,10 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
             }
           }
 
-          // give priority to link within the title
-          if (link.match(/https?:\/\/twitter.076.ne.jp\/.*/)) {
+          // twitter handling
+          if (link.match(/https?:\/\/twitter\./)) {
+            if (title.match(/^R to @/)) return; // skip retweets
+            // give priority to link within the title
             var re = /https?:\/\/\S+/;
             link = title.match(re) || link;
             if (Array.isArray(link)) link = link[0];
@@ -277,7 +279,7 @@ async function fetchRss(links, hours, local, filter, everything) {
     console.log("fetch time: " + ((Date.now() - was)/1000).toFixed(2) + "s");
     // order from newest to oldest and remove duplicates
     items.sort((a, b) => (a.pubDate < b.pubDate) ? 1 : -1);
-    items = items.filter((a, i, self) => i === self.findIndex((t) => ((t.title == a.title && t.image == a.image) || t.link == a.link)));
+    items = items.filter((a, i, self) => i === self.findIndex((t) => (t.title == a.title && t.image == a.image)))
   });
 
   // stop splash and restore title
