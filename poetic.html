@@ -2,12 +2,13 @@
 ---
 {% capture onload %}
 fetchRss([
-  'https://twitter.owacon.moe/FKI_I/media/rss',
-  'https://twitter.owacon.moe/NahoGraphics/media/rss',
   'https://note.com/hashtag/%E4%BB%8A%E6%97%A5%E3%81%AE%E7%9F%AD%E6%AD%8C/rss', //今日の短歌
   'https://note.com/hashtag/404%E7%BE%8E%E8%A1%93%E9%A4%A8/rss', //404美術館
   'https://note.com/hashtag/%E4%BF%B3%E5%8F%A5%E9%83%A8/rss', //俳句部
   'https://note.com/hashtag/%E7%B5%B5/rss', //絵
+// specific authors below
+  'https://twitter.owacon.moe/NahoGraphics/media/rss',
+  'https://note.com/kwkm_illust/rss', //ケイ
   'https://note.com/auzenismo/rss', //羽雲けむ
   'https://note.com/ykkfan/rss',
 ], 7*24, false, '#競馬予想|小姐|taketaketj|rokky0412na|rarutiraruti');
