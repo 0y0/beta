@@ -109,6 +109,10 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
     .then(text => {
       var count = 0;
       const xml = new window.DOMParser().parseFromString(text, "text/xml");
+      if (debug) {
+        console.log("received: " + text.length);
+        console.log(xml);
+      }
 
       // ATOM support
       if (xml.querySelector("feed")) xml.querySelectorAll("entry").forEach(e => {
@@ -254,7 +258,7 @@ async function fetchRss(links, hours, local, filter, everything) {
 
   if (hours == null) hours = 7 * 24; // default to one week
   const exclude = params.get("exclude");
-  const debug = params.get("debug");
+  const debug = params.get("debug") != null;
   const rex = exclude ? RegExp(exclude, 'i') : filter ? new RegExp(filter, 'i') : null; // pattern to exclude
   const title = document.title; // make a copy
 
@@ -279,7 +283,7 @@ async function fetchRss(links, hours, local, filter, everything) {
     console.log("fetch time: " + ((Date.now() - was)/1000).toFixed(2) + "s");
     // order from newest to oldest and remove duplicates
     items.sort((a, b) => (a.pubDate < b.pubDate) ? 1 : -1);
-    items = items.filter((a, i, self) => i === self.findIndex((t) => (t.title == a.title && t.image == a.image)))
+    items = items.filter((a, i, self) => i === self.findIndex((t) => (t.pubDate == a.pubDate && t.link == a.link)))
   });
 
   // stop splash and restore title

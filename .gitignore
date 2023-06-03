@@ -1,11 +1,6 @@
 Gemfile.lock
-_site
-_posts
-.sass-cache
-.jekyll-cache
-.jekyll-metadata
-.swp
+_*
+.*
+0*
+!.gitignore
 vendor
-.DS_Store
-.vscode
-.bundle
