@@ -1,0 +1,12 @@
+---
+---
+{% capture onload %}
+fetchRss([
+  'https://note.com/kwkm_illust/rss', //ケイ
+  'https://note.com/auzenismo/rss', //羽雲けむ
+  'https://note.com/nodakaori/rss', //のだかおり
+  'https://note.com/sato_art/rss', //サトウ
+  'https://note.com/aruji_note/rss', //あるじ
+], 7*24);
+{% endcapture %}
+{%- include rsswall onload=onload title="Cream" ico="cream.ico" -%}
