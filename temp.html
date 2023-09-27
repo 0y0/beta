@@ -1,0 +1,10 @@
+---
+---
+{% capture onload %}
+fetchRss([
+//  'https://qiita.com/popular-items/feed',
+//  'https://qiita.com/koshian2/feed',
+  'https://qiita.com/tags/swift/feed',
+], 0, false, null, true);
+{% endcapture %}
+{%- include rsswall onload=onload title="Temp" ico="beta.ico" -%}
