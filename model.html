@@ -2,11 +2,9 @@
 ---
 {% capture onload %}
 fetchRss([
-//  'https://twitter.owacon.moe/printablescom/rss',
-//  'https://twitter.owacon.moe/Cults3D/rss',
-//  'https://twitter.owacon.moe/davemakesstuff_/rss',
-//  'https://twitter.owacon.moe/3dHonza/rss',
-//  'https://twitter.owacon.moe/Swah3D/rss',
+  'https://3dprint.com/feed/',
+  'https://3dprinting.com/news/feed/',
+  'https://blog.prusa3d.com/feed/',
 ], 7*24);
 {% endcapture %}
 {%- include rsswall onload=onload title="3D Modeling" ico="cube.ico" -%}

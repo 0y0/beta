@@ -48,9 +48,7 @@ function userLang() {
 }
 
 function offsetDate(hours) {
-  var now = new Date();
-  now.setHours(now.getHours() + hours);
-  return now;
+  return new Date(Date.now() + hours * 3600000)
 }
 
 function formatDatetime(dt) {
@@ -197,6 +195,16 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
                 var t = html.getElementsByTagName("p")[0]?.innerHTML;
                 if (t) title = t;
               }
+            }
+          }
+          if (!image) {
+            var enc = i.getElementsByTagName("enclosure")[0];
+            if (enc && enc.getAttribute("type").startsWith("image/")) {
+              image = enc.getAttribute("url");
+            }
+            if (title.startsWith("New note by")) { // go for better title
+              var enc = unwrap(i.getElementsByTagName("content:encoded")[0]?.innerHTML);
+              if (enc) title = enc.replaceAll(/:[a-z_]+:/g, '').replaceAll(/\$\[.*?\]/g, '');
             }
           }
           if (!image) {
