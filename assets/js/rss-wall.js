@@ -99,6 +99,7 @@ function renderArticle(item, recent) {
 }
 
 function asyncFetch(items, url, cutoff, rex, everything, debug) {
+  console.log("cutoff: " + cutoff);
   return fetch(url)
     .then(response => {
       if (response.ok) return response.text();
