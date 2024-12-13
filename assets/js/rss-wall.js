@@ -19,7 +19,7 @@
 */
 
 //const proxyurl = "https://k34f75nkq2.onrender.com/";
-const proxyurl = "https://corsproxy.io/?";
+const proxyurl = "https://corsproxy.io/?url=";
 
 const htmlEntities = {
   nbsp: ' ',
