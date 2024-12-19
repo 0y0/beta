@@ -58,34 +58,43 @@ function formatDatetime(dt) {
 }
 
 function decodeEntity(str) {
-  str = str.replace(/\&([^;]+);/g, function (entity, entityCode) {
+  str = str?.replace(/\&([^;]+);/g, function (entity, entityCode) {
     var match;
     if (entityCode in htmlEntities)
       return htmlEntities[entityCode];
-    else if (match = entityCode.match(/^#x([\da-fA-F]+)$/))
+    else if (match = entityCode?.match(/^#x([\da-fA-F]+)$/))
       return String.fromCharCode(parseInt(match[1], 16));
-    else if (match = entityCode.match(/^#(\d+)$/))
+    else if (match = entityCode?.match(/^#(\d+)$/))
       return String.fromCharCode(~~match[1]);
     else
       return entity;
   });
-  return str.replace(/\(.*\)\s*$/, ''); // remove source info
+  return str?.replace(/\(.*\)\s*$/, ''); // remove source info
 };
 
 function unwrap(str) {
-  return str ? str.replace(/^\s*<!\[CDATA\[|\]\]>\s*$/g, '') : str;
+  return str?.replace(/^\s*<!\[CDATA\[|\]\]>\s*$/g, '');
 }
 
-function dropTags(str) {
-  return str ? str.replace(/[#＃]\S+\s*/g, '') : str;
+function dropTag(html) {
+   let doc = new DOMParser().parseFromString(html, 'text/html');
+   return doc.body.textContent || "";
+}
+
+function dropHash(str) {
+  return str?.replace(/[#＃]\S+\s*/g, '');
+}
+
+function dropLink(str) {
+  return str?.replace(/(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.-]*)/g, '');
 }
 
 function renderArticle(item, recent) {
   var ts = new Date(item.pubDate);
   var cl = (recent && ts > recent) ? ' class="recent"' : '';
   var img = item.image ? '<img src="' + item.image + '" alt="">\n        ' : '';
-  var title = dropTags(item.title);
-  var link = dropTags(item.link);
+  var title = dropHash(dropLink(dropTag(item.title || item.desc)));
+  var link = dropHash(item.link);
   var html = `
     <article${cl}>
       <div>${link}</div>
@@ -121,9 +130,9 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
         if (!cutoff || pubDate > cutoff) {
           // exclude items matching regexp
           var title = decodeEntity(e.querySelector("title")?.innerHTML);
-          if (rex && title.match(rex)) return;
+          if (rex && title?.match(rex)) return;
           var link = e.querySelector("link")?.getAttribute("href").replace('.youtube.com/watch?', '.youtube.com/watch?autoplay=1&');
-          if (rex && link.match(rex)) return;
+          if (rex && link?.match(rex)) return;
 
           // look for a picture
           var image = e.getElementsByTagName("media:thumbnail")[0]?.getAttribute("url");
@@ -157,11 +166,11 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
         if (!cutoff || pubDate > cutoff || everything) {
           // exclude items matching rex
           var title = decodeEntity(unwrap(i.querySelector("title")?.innerHTML));
-          if (rex && title.match(rex)) return;
+          if (rex && title?.match(rex)) return;
           var link = unwrap(i.querySelector("link")?.innerHTML);
-          if (rex && link.match(rex)) return;
-          var desc = unwrap(i.querySelector("description")?.innerHTML);
-          if (rex && desc.match(rex)) return;
+          if (rex && link?.match(rex)) return;
+          var desc = decodeEntity(unwrap(i.querySelector("description")?.innerHTML));
+          if (rex && desc?.match(rex)) return;
 
           // look for a picture
           var image = unwrap(i.querySelector("image")?.innerHTML);
@@ -174,7 +183,7 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
           if (!image) {
             for (var m of i.getElementsByTagName("media:content")) {
               var url = m.getAttribute("url");
-              if (url.match(/(.jpg|.jpeg|.png|.gif)/i)) {
+              if (url?.match(/(.jpg|.jpeg|.png|.gif)/i)) {
                 image = url;
                 break;
               }
@@ -192,7 +201,7 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
                   break;
                 }
               }
-              if (title.indexOf("J-RISQ") > 0) { // go for better title
+              if (title?.indexOf("J-RISQ") > 0) { // go for better title
                 var t = html.getElementsByTagName("p")[0]?.innerHTML;
                 if (t) title = t;
               }
@@ -203,7 +212,7 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
             if (enc && enc.getAttribute("type").startsWith("image/")) {
               image = enc.getAttribute("url");
             }
-            if (title.startsWith("New note by")) { // go for better title
+            if (title?.startsWith("New note by")) { // go for better title
               var enc = unwrap(i.getElementsByTagName("content:encoded")[0]?.innerHTML);
               if (enc) title = enc.replaceAll(/:[a-z_]+:/g, '').replaceAll(/\$\[.*?\]/g, '');
             }
@@ -223,13 +232,13 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
           }
 
           // twitter handling
-          if (link.match(/https?:\/\/twitter\./)) {
-            if (title.match(/^R to @/)) return; // skip retweets
+          if (link?.match(/https?:\/\/twitter\./)) {
+            if (title?.match(/^R to @/)) return; // skip retweets
             // give priority to link within the title
             var re = /https?:\/\/\S+/g;
-            link = title.match(re) || link;
+            link = title?.match(re) || link;
             if (Array.isArray(link)) link = link[0];
-            title = title.replaceAll(re, '').replace(/^RT?\s+[^:]*:/, '');
+            title = title?.replaceAll(re, '').replace(/^RT?\s+[^:]*:/, '');
           }
 
           let item = {
@@ -237,6 +246,7 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
             title: title,
             image: image,
             link: link,
+            desc: desc,
           };
 
           if (debug) console.log(item);

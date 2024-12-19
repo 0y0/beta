@@ -2,16 +2,19 @@
 ---
 {% capture onload %}
 fetchRss([
-  "https://misskey.io/@Regls3451.rss",
   "https://misskey.io/@Miama_rein.rss",
-  "https://misskey.io/@cafe_alpha.rss",
   "https://misskey.io/@yuduki_nh.rss",
   "https://misskey.io/@amacha.rss",
   "https://misskey.io/@mangasuhilabo.rss",
   "https://misskey.io/@misopi.rss",
-  "https://misskey.day/@oyo.rss",
   "https://fedibird.com/@snowowl.rss",
-  "https://misskey-square.net/@soda_y29.rss",
-], 30*24);
+  'https://misskey.io/@Mooncastle.rss',
+  'https://misskey.io/@toki205.rss',
+  'https://misskey.io/@sagi.rss',
+  'https://misskey.io/@valiant_d69.rss',
+  'https://misskey.io/@kanpyo_japan.rss',
+  'https://submarin.online/@tamanyanko2.rss',
+  'https://mastodon-japan.net/@nogood.rss',
+], 7*24);
 {% endcapture %}
-{%- include rsswall onload=onload title="Misskey" ico="beta.ico" -%}
+{%- include rsswall onload=onload title="Misskey" ico="cat.ico" -%}
