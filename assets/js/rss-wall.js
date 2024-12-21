@@ -20,6 +20,7 @@
 
 //const proxyurl = "https://k34f75nkq2.onrender.com/";
 const proxyurl = "https://corsproxy.io/?url=";
+const proxyurl2 = "https://api.cors.lol/?url=";
 
 const htmlEntities = {
   nbsp: ' ',
@@ -286,7 +287,7 @@ async function fetchRss(links, hours, local, filter, everything) {
   var count = links.length;
   document.title = title + " " + "<".repeat(count); // show progress in title
   var batch = links.map(async url => {
-    var link = local ? url : proxyurl + url;
+    var link = local ? url : (url.indexOf("note.com")<0 ? proxyurl : proxyurl2) + url;
     var all = params.get("all") != null;
     await asyncFetch(items, link, hours == 0 ? null : offsetDate(-hours), rex, all || everything, debug)
       .then(num => {
