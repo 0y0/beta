@@ -110,7 +110,7 @@ function renderArticle(item, recent) {
 
 function asyncFetch(items, url, cutoff, rex, everything, debug) {
   console.log("cutoff: " + cutoff);
-  return fetch(url)
+  return fetch(url, { signal: AbortSignal.timeout(5000) })
     .then(response => {
       if (response.ok) return response.text();
       else throw new Error("status " + response.status + " fetching: " + url);
