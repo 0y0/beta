@@ -84,9 +84,9 @@ function unwrap(str) {
 
 function abbrev(str, sz) {
   if (str) {
-    str = str.replace(/:[A-Za-z0-9_]+:/g, '\u25a2'); // emoji as a box
     let clusters = new RegExp(
-      '[A-Za-z0-9_]+|'+                              // ASCII letters (no accents)
+      ':[A-Za-z0-9_]+?:|'+                            // misskey emoji
+      '[\x21-\x7E]+|'+                               // ASCII words
       '[\u3040-\u309F]+|'+                           // Hiragana
       '[\u30A0-\u30FF]+|'+                           // Katakana
       '[\u4E00-\u9FFF\uF900-\uFAFF\u3400-\u4DBF]',   // Single CJK ideographs
@@ -95,10 +95,10 @@ function abbrev(str, sz) {
     let n = Math.floor(sz/2 - 2);
     if (tokens?.length > sz && n > 0) {
       let words = tokens.map(t => t.match(/^[A-Za-z0-9_]+$/) ? ` ${t} ` : t);
-      str = (words.slice(0, n).join('') + "... " + words.slice(-n).join('')).replace(/\s{2,}/, ' ').trim();
+      str = (words.slice(0, n).join('') + "... " + words.slice(-n).join('')).replace(/\s{2,}/g, ' ').trim();
     }
   }
-  return str;
+  return str?.replace(/:[A-Za-z0-9_]+:/g, '\u2745'); // emoji substitute
 }
 
 function dropTag(html) {
@@ -256,7 +256,7 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
           // misskey special handling
           if (title?.startsWith("New note by")) { // look for better title
             var enc = unwrap(raw.getElementsByTagName("content:encoded")[0]?.innerHTML);
-            if (enc) title = validate(dropMeta(enc.replaceAll(/:[a-z_]+:/g, '').replaceAll(/\$\[.*?\]/g, '')));
+            if (enc) title = validate(dropMeta(enc.replaceAll(/\$\[.*?\]/g, '')));
           }
 
           // twitter special handling
