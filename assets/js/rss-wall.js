@@ -37,6 +37,11 @@ const htmlEntities = {
   apos: '\''
 };
 
+function validate(obj) {
+  if (obj == 'undefined') return null;
+  return obj || null;
+}
+
 function hashCode(str) {
   return str.split("").reduce((s, c) => Math.imul(31, s) + c.charCodeAt(0) | 0, 0);
 }
@@ -77,26 +82,49 @@ function unwrap(str) {
   return str?.replace(/^\s*<!\[CDATA\[|\]\]>\s*$/g, '');
 }
 
-function dropTag(html) {
-   let doc = new DOMParser().parseFromString(html, 'text/html');
-   return doc.body.textContent || "";
+function abbrev(str, sz) {
+  if (str) {
+    str = str.replace(/:[A-Za-z0-9_]+:/g, '\u25a2'); // emoji as a box
+    let clusters = new RegExp(
+      '[A-Za-z0-9_]+|'+                              // ASCII letters (no accents)
+      '[\u3040-\u309F]+|'+                           // Hiragana
+      '[\u30A0-\u30FF]+|'+                           // Katakana
+      '[\u4E00-\u9FFF\uF900-\uFAFF\u3400-\u4DBF]',   // Single CJK ideographs
+    'g');
+    let tokens = str.match(clusters);
+    let n = Math.floor(sz/2 - 2);
+    if (tokens?.length > sz && n > 0) {
+      let words = tokens.map(t => t.match(/^[A-Za-z0-9_]+$/) ? ` ${t} ` : t);
+      str = (words.slice(0, n).join('') + "... " + words.slice(-n).join('')).replace(/\s{2,}/, ' ').trim();
+    }
+  }
+  return str;
 }
 
-function dropHash(str) {
-  return str?.replace(/[#＃]\S+\s*/g, '');
+function dropTag(html) {
+   let doc = new DOMParser().parseFromString(html, 'text/html');
+   return doc.body.textContent || null;
 }
 
 function dropLink(str) {
   return str?.replace(/(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.-]*)/g, '');
 }
 
+function dropHash(str) {
+  return str?.replace(/[#＃]\S+\s*(?<![\>\u201d])/g, '');
+}
+
+function dropMeta(str) {
+  return dropHash(dropLink(dropTag(str)));
+}
+
 function renderArticle(item, recent) {
-  var ts = new Date(item.pubDate);
-  var cl = (recent && ts > recent) ? ' class="recent"' : '';
-  var img = item.image ? '<img src="' + item.image + '" alt="">\n        ' : '';
-  var title = dropHash(dropLink(dropTag(item.title || item.desc)));
-  var link = dropHash(item.link);
-  var html = `
+  let ts = new Date(item.pubDate);
+  let cl = (recent && ts > recent) ? ' class="recent"' : '';
+  let img = item.image ? '<img src="' + item.image + '" alt="">\n        ' : '';
+  let title = abbrev(item.title || item.desc, 40);
+  let link = dropHash(item.link);
+  let html = `
     <article${cl}>
       <div>${link}</div>
       <a href="${link}" target="_blank" rel="noopener">
@@ -118,40 +146,37 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
     .then(text => {
       var count = 0;
       const xml = new window.DOMParser().parseFromString(text, "text/xml");
-      if (debug) {
-        console.log("received: " + text.length);
-        console.log(xml);
-      }
 
       // ATOM support
-      if (xml.querySelector("feed")) xml.querySelectorAll("entry").forEach(e => {
-        if (debug) console.log(e);
-        var pubDate = Date.parse(unwrap(e.querySelector("published")?.innerHTML));
+      if (xml.querySelector("feed")) xml.querySelectorAll("entry").forEach(raw => {
+        var pubDate = Date.parse(unwrap(raw.querySelector("published")?.innerHTML));
         if (isNaN(pubDate)) return; // ignore items with invalid date
         if (!cutoff || pubDate > cutoff) {
           // exclude items matching regexp
-          var title = decodeEntity(e.querySelector("title")?.innerHTML);
+          var title = validate(dropMeta(decodeEntity(raw.querySelector("title")?.innerHTML)));
           if (rex && title?.match(rex)) return;
-          var link = e.querySelector("link")?.getAttribute("href").replace('.youtube.com/watch?', '.youtube.com/watch?autoplay=1&');
+          var link = raw.querySelector("link")?.getAttribute("href").replace('.youtube.com/watch?', '.youtube.com/watch?autoplay=1&');
           if (rex && link?.match(rex)) return;
 
           // look for a picture
-          var image = e.getElementsByTagName("media:thumbnail")[0]?.getAttribute("url");
-          if (image) {
+          var image = raw.getElementsByTagName("media:thumbnail")[0]?.getAttribute("url");
+          if (image && title) {
             items.push({
-              pubDate: pubDate,
               title: title,
               image: image,
               link: link,
+              pubDate: pubDate,
+              raw: raw.outerHTML,
             });
             count++;
           }
           else if (everything) {
             items.push({
-              pubDate: pubDate,
               title: title,
               //image: "https://picsum.photos/seed/" + hashCode(link) + "/400/300.webp",
               link: link,
+              pubDate: pubDate,
+              raw: raw.outerHTML,
             });
             count++;
           }
@@ -159,30 +184,29 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
       });
 
       // RSS support
-      if (xml.querySelector("rss")) xml.querySelectorAll("item").forEach(i => {
-        if (debug) console.log(i);
-        var pubDate = Date.parse(unwrap(i.querySelector("pubDate")?.innerHTML));
-        if (!pubDate) pubDate = Date.parse(i.getElementsByTagName("dcterms:modified")[0]?.innerHTML);
+      if (xml.querySelector("rss")) xml.querySelectorAll("item").forEach(raw => {
+        var pubDate = Date.parse(unwrap(raw.querySelector("pubDate")?.innerHTML));
+        if (!pubDate) pubDate = Date.parse(raw.getElementsByTagName("dcterms:modified")[0]?.innerHTML);
         if (isNaN(pubDate)) return; // ignore items with invalid date
         if (!cutoff || pubDate > cutoff || everything) {
           // exclude items matching rex
-          var title = decodeEntity(unwrap(i.querySelector("title")?.innerHTML));
+          var title = validate(dropMeta(decodeEntity(unwrap(raw.querySelector("title")?.innerHTML))));
           if (rex && title?.match(rex)) return;
-          var link = unwrap(i.querySelector("link")?.innerHTML);
+          var link = unwrap(raw.querySelector("link")?.innerHTML);
           if (rex && link?.match(rex)) return;
-          var desc = decodeEntity(unwrap(i.querySelector("description")?.innerHTML));
+          var desc = validate(dropMeta(decodeEntity(unwrap(raw.querySelector("description")?.innerHTML))));
           if (rex && desc?.match(rex)) return;
 
           // look for a picture
-          var image = unwrap(i.querySelector("image")?.innerHTML);
+          var image = unwrap(raw.querySelector("image")?.innerHTML);
           if (!image) {
-            image = i.getElementsByTagName("media:thumbnail")[0]?.getAttribute("url");
+            image = raw.getElementsByTagName("media:thumbnail")[0]?.getAttribute("url");
           }
           if (!image) {
-            image = i.getElementsByTagName("media:thumbnail")[0]?.innerHTML;
+            image = raw.getElementsByTagName("media:thumbnail")[0]?.innerHTML;
           }
           if (!image) {
-            for (var m of i.getElementsByTagName("media:content")) {
+            for (var m of raw.getElementsByTagName("media:content")) {
               var url = m.getAttribute("url");
               if (url?.match(/(.jpg|.jpeg|.png|.gif)/i)) {
                 image = url;
@@ -191,7 +215,7 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
             }
           }
           if (!image) {
-            var enc = unwrap(i.getElementsByTagName("content:encoded")[0]?.innerHTML);
+            var enc = unwrap(raw.getElementsByTagName("content:encoded")[0]?.innerHTML);
             if (enc) {
               var html = new DOMParser().parseFromString(enc, "text/html");
               for (var m of html.getElementsByTagName("img")) {
@@ -203,20 +227,16 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
                 }
               }
               if (title?.indexOf("J-RISQ") > 0) { // go for better title
-                var t = html.getElementsByTagName("p")[0]?.innerHTML;
+                var t = validate(dropMeta(html.getElementsByTagName("p")[0]?.innerHTML));
                 if (t) title = t;
               }
             }
           }
           if (!image) {
-            var enc = i.getElementsByTagName("enclosure")[0];
+            var enc = raw.getElementsByTagName("enclosure")[0];
             if (enc && enc.getAttribute("type").startsWith("image/")) {
               image = enc.getAttribute("url");
               if (image.indexOf("sensitive=true") >= 0) image = null; // skip sensitive images
-            }
-            if (title?.startsWith("New note by")) { // go for better title
-              var enc = unwrap(i.getElementsByTagName("content:encoded")[0]?.innerHTML);
-              if (enc) title = enc.replaceAll(/:[a-z_]+:/g, '').replaceAll(/\$\[.*?\]/g, '');
             }
           }
           if (!image) {
@@ -233,28 +253,33 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
             }
           }
 
-          // twitter handling
+          // misskey special handling
+          if (title?.startsWith("New note by")) { // look for better title
+            var enc = unwrap(raw.getElementsByTagName("content:encoded")[0]?.innerHTML);
+            if (enc) title = validate(dropMeta(enc.replaceAll(/:[a-z_]+:/g, '').replaceAll(/\$\[.*?\]/g, '')));
+          }
+
+          // twitter special handling
           if (link?.match(/https?:\/\/twitter\./)) {
             if (title?.match(/^R to @/)) return; // skip retweets
             // give priority to link within the title
             var re = /https?:\/\/\S+/g;
             link = title?.match(re) || link;
             if (Array.isArray(link)) link = link[0];
-            title = title?.replaceAll(re, '').replace(/^RT?\s+[^:]*:/, '');
+            title = validate(dropMeta(title?.replaceAll(re, '').replace(/^RT?\s+[^:]*:/, '')));
           }
 
           let item = {
-            pubDate: pubDate,
             title: title,
             image: image,
             link: link,
             desc: desc,
+            pubDate: pubDate,
+            raw: raw.outerHTML,
           };
 
-          if (debug) console.log(item);
-
-          // add item
-          if (image && image.indexOf('-thumb.') < 0) { // skip if no good picture
+          // add item (requires good image and a title/desc)
+          if (image && image.indexOf('-thumb.') < 0 && (title || desc)) {
             items.push(item);
             count++;
           }
@@ -297,7 +322,7 @@ async function fetchRss(links, hours, local, filter, everything) {
       .finally(_ => {
         document.title = title + " " + "<".repeat(--count); // update title
       })
-      .catch(err => console.log(err));
+      .catch(err => console.error(err));
   });
   const was = Date.now();
   await Promise.allSettled(batch).then(results => {
@@ -318,6 +343,7 @@ async function fetchRss(links, hours, local, filter, everything) {
   const end = (crop > 0 && crop <= items.length) ? crop : items.length;
   for (var i of items.slice(0, end)) {
     renderArticle(i, hhours == 0 ? null : offsetDate(-hhours));
+    if (debug) console.log(i);
   }
   console.log("render count: " + end);
 }
