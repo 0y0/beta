@@ -212,6 +212,7 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
             var enc = i.getElementsByTagName("enclosure")[0];
             if (enc && enc.getAttribute("type").startsWith("image/")) {
               image = enc.getAttribute("url");
+              if (image.indexOf("sensitive=true") >= 0) image = null; // skip sensitive images
             }
             if (title?.startsWith("New note by")) { // go for better title
               var enc = unwrap(i.getElementsByTagName("content:encoded")[0]?.innerHTML);
