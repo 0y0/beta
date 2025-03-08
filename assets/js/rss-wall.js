@@ -85,17 +85,18 @@ function unwrap(str) {
 function abbrev(str, sz) {
   if (str) {
     let clusters = new RegExp(
-      ':[A-Za-z0-9_]+?:|'+                            // misskey emoji
+      ':\w+:|'+                                      // misskey emoji
       '[\x21-\x7E]+|'+                               // ASCII words
       '[\u3040-\u309F]+|'+                           // Hiragana
       '[\u30A0-\u30FF]+|'+                           // Katakana
-      '[\u4E00-\u9FFF\uF900-\uFAFF\u3400-\u4DBF]',   // Single CJK ideographs
-    'g');
+      '[\u4E00-\u9FFF\uF900-\uFAFF\u3400-\u4DBF]+|'+ // Single CJK ideographs
+      '[^\u0009\u000A\u000B\u000C\u000D\u0020\u0085\u00A0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u2028\u2029\u202F\u205F\u3000]',           // non-empty
+      'g');
     let tokens = str.match(clusters);
-    let n = Math.floor(sz/2 - 2);
-    if (tokens?.length > sz && n > 0) {
+    if (tokens?.length > sz - 4) {
+      let n = Math.floor(sz/2 - 2);
       let words = tokens.map(t => t.match(/^[A-Za-z0-9_]+$/) ? ` ${t} ` : t);
-      str = (words.slice(0, n).join('') + "... " + words.slice(-n).join('')).replace(/\s{2,}/g, ' ').trim();
+      str = (words.slice(0, n).join('') + " \u22EF\u22EF " + words.slice(-n).join('')).replace(/\s{2,}/g, ' ').trim();
     }
   }
   return str?.replace(/:[A-Za-z0-9_]+:/g, '\u2745'); // emoji substitute
