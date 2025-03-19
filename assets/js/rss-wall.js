@@ -116,7 +116,7 @@ function dropHash(str) {
 }
 
 function dropMeta(str) {
-  return dropHash(dropLink(dropTag(str)));
+  return dropLink(dropTag(str));
 }
 
 function renderArticle(item, recent) {
