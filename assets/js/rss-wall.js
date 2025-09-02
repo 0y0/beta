@@ -151,10 +151,15 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
       // ATOM support
       if (xml.querySelector("feed")) xml.querySelectorAll("entry").forEach(raw => {
         var pubDate = Date.parse(unwrap(raw.querySelector("published")?.innerHTML));
+        if (!pubDate) pubDate = Date.parse(unwrap(raw.querySelector("updated")?.innerHTML));
         if (isNaN(pubDate)) return; // ignore items with invalid date
         if (!cutoff || pubDate > cutoff) {
           // exclude items matching regexp
           var title = validate(dropMeta(decodeEntity(raw.querySelector("title")?.innerHTML)));
+          var content = validate(dropMeta(decodeEntity(raw.querySelector("content")?.innerHTML)));
+          if (content) title = content;
+          var author = dropMeta(decodeEntity(raw.querySelector("author")?.querySelector("name")?.innerHTML));
+          if (author) title = title + " (" + author + ")";
           if (rex && title?.match(rex)) return;
           var link = raw.querySelector("link")?.getAttribute("href").replace('.youtube.com/watch?', '.youtube.com/watch?autoplay=1&');
           if (rex && link?.match(rex)) return;
