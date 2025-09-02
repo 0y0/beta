@@ -16,6 +16,7 @@
     recent = set item highlight threshold in hours (default: 24)
     crop = set maximum number of items to show (default: no limit)
     debug = print debug messages
+    verbose = do not abbreviate when rendering articles
 */
 
 //const proxyurl = "https://k34f75nkq2.onrender.com/";
@@ -93,7 +94,7 @@ function abbrev(str, sz) {
       '[^\u0009\u000A\u000B\u000C\u000D\u0020\u0085\u00A0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u2028\u2029\u202F\u205F\u3000]',           // non-empty
       'g');
     let tokens = str.match(clusters);
-    if (tokens?.length > sz - 4) {
+    if (sz && tokens?.length > sz - 4) {
       let n = Math.floor(sz/2 - 2);
       let words = tokens.map(t => t.match(/^[A-Za-z0-9_]+$/) ? ` ${t} ` : t);
       str = (words.slice(0, n).join('') + " \u22EF\u22EF " + words.slice(-n).join('')).replace(/\s{2,}/g, ' ').trim();
@@ -119,11 +120,11 @@ function dropMeta(str) {
   return dropLink(dropTag(str));
 }
 
-function renderArticle(item, recent) {
+function renderArticle(item, recent, everything) {
   let ts = new Date(item.pubDate);
   let cl = (recent && ts > recent) ? ' class="recent"' : '';
   let img = item.image ? '<img src="' + item.image + '" alt="">\n        ' : '';
-  let title = abbrev(item.title || item.desc, 40);
+  let title = abbrev(item.title || item.desc, everything ? null : 40);
   let link = dropHash(item.link);
   let html = `
     <article${cl}>
@@ -311,6 +312,7 @@ async function fetchRss(links, hours, local, filter, everything) {
   if (hours == null) hours = 7 * 24; // default to one week
   const exclude = params.get("exclude");
   const debug = params.get("debug") != null;
+  const verbose = params.get("verbose") != null;
   const rex = exclude ? RegExp(exclude, 'i') : filter ? new RegExp(filter, 'i') : null; // pattern to exclude
   const title = document.title; // make a copy
 
@@ -348,7 +350,7 @@ async function fetchRss(links, hours, local, filter, everything) {
   const crop = params.get("crop");
   const end = (crop > 0 && crop <= items.length) ? crop : items.length;
   for (var i of items.slice(0, end)) {
-    renderArticle(i, hhours == 0 ? null : offsetDate(-hhours));
+    renderArticle(i, hhours == 0 ? null : offsetDate(-hhours), verbose);
     if (debug) console.log(i);
   }
   console.log("render count: " + end);
