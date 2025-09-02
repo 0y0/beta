@@ -120,11 +120,11 @@ function dropMeta(str) {
   return dropLink(dropTag(str));
 }
 
-function renderArticle(item, recent, everything) {
+function renderArticle(item, recent, verbose) {
   let ts = new Date(item.pubDate);
   let cl = (recent && ts > recent) ? ' class="recent"' : '';
   let img = item.image ? '<img src="' + item.image + '" alt="">\n        ' : '';
-  let title = abbrev(item.title || item.desc, everything ? null : 40);
+  let title = abbrev(item.title || item.desc, verbose ? null : 40);
   let link = dropHash(item.link);
   let html = `
     <article${cl}>
@@ -157,10 +157,12 @@ function asyncFetch(items, url, cutoff, rex, everything, debug) {
         if (!cutoff || pubDate > cutoff) {
           // exclude items matching regexp
           var title = validate(dropMeta(decodeEntity(raw.querySelector("title")?.innerHTML)));
-          var content = validate(dropMeta(decodeEntity(raw.querySelector("content")?.innerHTML)));
-          if (content) title = content;
-          var author = dropMeta(decodeEntity(raw.querySelector("author")?.querySelector("name")?.innerHTML));
-          if (author) title = title + " (" + author + ")";
+          if (url.indexOf("data.jma.go.jp") >= 0) {
+            var content = validate(dropMeta(decodeEntity(raw.querySelector("content")?.innerHTML)));
+            if (content) title = content;
+            var author = dropMeta(decodeEntity(raw.querySelector("author")?.querySelector("name")?.innerHTML));
+            if (author) title = title + " (" + author + ")";
+          }
           if (rex && title?.match(rex)) return;
           var link = raw.querySelector("link")?.getAttribute("href").replace('.youtube.com/watch?', '.youtube.com/watch?autoplay=1&');
           if (rex && link?.match(rex)) return;
