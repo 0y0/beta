@@ -357,3 +357,12 @@ async function fetchRss(links, hours, local, filter, everything) {
   }
   console.log("render count: " + end);
 }
+
+async function fetchNotes(hashtags, hours, local, filter, everything) {
+  if (typeof hashtags === 'string') hashtags = hashtags.split(',');
+  if (hashtags instanceof Array) {
+    const links = hashtags.map(t => encodeURI(`https://note.com/hashtag/${t}/rss`));
+    await fetchRss(links, hours, local, filter, everything);
+  }
+}
+

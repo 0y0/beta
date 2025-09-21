@@ -1,0 +1,9 @@
+---
+---
+{% capture onload %}
+const params = new URLSearchParams(window.location.search);
+const hashtag = params.get('hashtag');
+document.title = hashtag;
+fetchNotes(hashtag, 7*24);
+{% endcapture %}
+{%- include rsswall onload=onload title="Notes" ico="pen.ico" -%}
