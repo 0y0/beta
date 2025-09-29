@@ -4,6 +4,6 @@
 const params = new URLSearchParams(window.location.search);
 const hashtag = params.get('hashtag');
 document.title = hashtag;
-fetchNotes(hashtag, 7*24);
+fetchNotes(hashtag, 7*24, false, 'manchoco_0394');
 {% endcapture %}
 {%- include rsswall onload=onload title="Notes" ico="pen.ico" -%}
