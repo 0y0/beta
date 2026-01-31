@@ -20,8 +20,10 @@
 */
 
 //const proxyurl = "https://k34f75nkq2.onrender.com/";
-const proxyurl = "https://corsproxy.io/?url=";
-const proxyurl2 = "https://api.cors.lol/?url=";
+//const proxyurl = "https://corsproxy.io/?url=";
+//const proxyurl = "https://api.cors.lol/?url=";
+//const proxyurl = "https://proxy.corsfix.com/?";
+const proxyurl = "https://bagof.crap.jp/php/corsproxy/?url="; // temp
 
 const htmlEntities = {
   nbsp: ' ',
