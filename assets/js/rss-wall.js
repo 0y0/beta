@@ -19,11 +19,11 @@
     verbose = do not abbreviate when rendering articles
 */
 
-const proxyurl = "https://k34f75nkq2.onrender.com/";
+//const proxyurl = "https://k34f75nkq2.onrender.com/";
 //const proxyurl = "https://corsproxy.io/?url=";
 //const proxyurl = "https://api.cors.lol/?url=";
 //const proxyurl = "https://proxy.corsfix.com/?";
-//const proxyurl = "https://bagof.crap.jp/php/corsproxy/?url="; // temp
+const proxyurl = "https://bagof.crap.jp/php/corsproxy/?url="; // temp
 
 const htmlEntities = {
   nbsp: ' ',
